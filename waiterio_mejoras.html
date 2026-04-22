@@ -1567,7 +1567,11 @@ function closeAbonoModal(){document.getElementById('credito-modal').classList.re
 function confirmAbono(){
   const amount=parseInt(document.getElementById('abono-amount-input').value)||0;
   if(!amount||amount<=0){document.getElementById('abono-amount-input').focus();return;}
-  const o=orders.find(x=>String(x.id)===String(abonoOrderId)); if(!o)return;
+  const o=orders.find(x=>String(x.id)===String(abonoOrderId));
+  if(!o){
+    alert('⚠️ No se encontró el pedido.\nBuscando ID: '+abonoOrderId+'\nIDs disponibles: '+orders.map(x=>x.id).join(', '));
+    return;
+  }
   if(!o.abonos) o.abonos=[];
   o.abonos.push({amount, fecha:now(), payMethod:abonoMetodo, deudorName:o.deudorName||'Sin nombre'});
   closeAbonoModal();
@@ -2022,7 +2026,11 @@ function confirmDeudorAndPay(){
 }
 
 function finalizePago(method, deudorName){
-  const o=orders.find(x=>String(x.id)===String(billOrderId)); if(!o)return;
+  const o=orders.find(x=>String(x.id)===String(billOrderId));
+  if(!o){
+    alert('⚠️ No se encontró el pedido.\nBuscando ID: '+billOrderId+'\nIDs disponibles: '+orders.map(x=>x.id).join(', '));
+    return;
+  }
   o.status=method==='credito'?'credito':'paid';
   o.payMethod=method;
   o.closedAt=now();
