@@ -984,9 +984,17 @@ function saveData(){
 
 // Guarda UN solo pedido en Firebase (más confiable para operaciones de crédito)
 function saveOrder(o){
-  try{
-    REF.orders.child(String(o.id)).set(o);
-  }catch(e){ console.error('saveOrder error',e); }
+  return new Promise((resolve, reject)=>{
+    REF.orders.child(String(o.id)).set(o, error=>{
+      if(error){
+        console.error('saveOrder error:', error);
+        alert('❌ Error al guardar: ' + error.message);
+        reject(error);
+      } else {
+        resolve();
+      }
+    });
+  });
 }
 
 function savePreciosIngr(){
@@ -1562,9 +1570,8 @@ function confirmAbono(){
   const o=orders.find(x=>String(x.id)===String(abonoOrderId)); if(!o)return;
   if(!o.abonos) o.abonos=[];
   o.abonos.push({amount, fecha:now(), payMethod:abonoMetodo, deudorName:o.deudorName||'Sin nombre'});
-  saveOrder(o);
   closeAbonoModal();
-  renderHistorial();
+  saveOrder(o).then(()=>{ renderHistorial(); }).catch(()=>{});
 }
 function pagarTotalCredito(orderId){
   openAbonoModal(orderId);
@@ -2022,10 +2029,12 @@ function finalizePago(method, deudorName){
   if(deudorName) o.deudorName=deudorName;
   if(method==='credito') o.abonos=[];
   if(o.tableId) tableStates[o.tableId]={status:'free'};
-  saveOrder(o);
-  REF.tables.set(tableStates);
-  REF.counter.set(orderCounter);
-  closeBill(); renderPedidos(); renderMesas();
+  closeBill();
+  saveOrder(o).then(()=>{
+    REF.tables.set(tableStates);
+    REF.counter.set(orderCounter);
+    renderPedidos(); renderMesas();
+  }).catch(()=>{});
 }
 
 // ── COSTOS: INGREDIENTES Y PRECIOS ───────────────────────────────────────────
