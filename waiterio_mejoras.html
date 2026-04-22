@@ -1534,35 +1534,39 @@ function selAbonoMet(m){
 }
 
 function openAbonoModal(orderId){
-  abonoOrderId=orderId;
+  abonoOrderId=String(orderId); // normalizar a string para evitar problemas de tipo
   abonoMetodo='efectivo';
+  const o=orders.find(x=>String(x.id)===String(orderId));
+  if(!o) return;
+  const total=totalOf(o);
+  const abonado=(o.abonos||[]).reduce((s,a)=>s+a.amount,0);
+  const pendiente=total-abonado;
+  document.getElementById('abono-modal-title').textContent=`💜 Abonar · ${o.deudorName||'Crédito'} · Pendiente: ${fmt(pendiente)}`;
   document.getElementById('abono-amount-input').value='';
   selAbonoMet('efectivo');
   document.getElementById('credito-modal').classList.add('open');
-  setTimeout(()=>document.getElementById('abono-amount-input').focus(),100);
+  setTimeout(()=>document.getElementById('abono-amount-input').focus(),150);
 }
 function closeAbonoModal(){document.getElementById('credito-modal').classList.remove('open');abonoOrderId=null;}
 function confirmAbono(){
   const amount=parseInt(document.getElementById('abono-amount-input').value)||0;
   if(!amount||amount<=0){document.getElementById('abono-amount-input').focus();return;}
-  const o=orders.find(x=>x.id===abonoOrderId); if(!o)return;
+  const o=orders.find(x=>String(x.id)===String(abonoOrderId)); if(!o)return;
   if(!o.abonos) o.abonos=[];
   o.abonos.push({amount, fecha:now(), payMethod:abonoMetodo, deudorName:o.deudorName||'Sin nombre'});
   closeAbonoModal();
   saveData(); renderHistorial();
 }
 function pagarTotalCredito(orderId){
-  // Abre el modal para elegir método al saldar todo
   openAbonoModal(orderId);
-  // Precarga el monto pendiente
-  const o=orders.find(x=>x.id===orderId); if(!o)return;
+  const o=orders.find(x=>String(x.id)===String(orderId)); if(!o)return;
   const total=totalOf(o);
   const abonado=(o.abonos||[]).reduce((s,a)=>s+a.amount,0);
   const pendiente=total-abonado;
   setTimeout(()=>{
     const inp=document.getElementById('abono-amount-input');
     if(inp) inp.value=pendiente;
-  },50);
+  },100);
 }
 
 function newOrder(tableId){
@@ -1742,7 +1746,7 @@ function confirmarProteina(opcion){
   const proteina = opcion.split(' ').slice(1).join(' ');
   const nombre = `${catItem.name} · ${proteina}`;
   // Cada combinación plato+proteína tiene su propio "slot" en el carrito
-  const slotId = `${_proteinaItemId}_${proteina.toLowerCase().replace(/\s+/g,'_')}`;
+  const slotId = `${_proteinaItemId}_${proteina.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'_')}`;
   const ex = editing.items.find(i=>i.itemId===slotId);
   if(ex){ ex.qty++; }
   else { editing.items.push({itemId:slotId, _baseId:_proteinaItemId, name:nombre, price:catItem.price, origPrice:catItem.price, ingrPct:100, qty:1, note:''}); }
@@ -2166,15 +2170,41 @@ function savePreciosIngr(){
 // Devuelve los ingredientes de un ítem del pedido (waiterio itemId)
 function getIngredientesDeItem(itemId){
   if(typeof itemId==='string' && itemId.startsWith('adicion_')) return [];
-  // Slot de proteína: "32_pechuga" → base 32
-  // Slot de descuento: "32_desc_123" → base 32
+
   let baseId = itemId;
+  let proteina = null;
+
   if(typeof itemId==='string'){
-    if(itemId.includes('_desc_')) baseId = parseInt(itemId.split('_desc_')[0]);
-    else if(itemId.includes('_'))  baseId = parseInt(itemId.split('_')[0]);
+    if(itemId.includes('_desc_'))      baseId = parseInt(itemId.split('_desc_')[0]);
+    else if(itemId.includes('_')){
+      const parts = itemId.split('_');
+      baseId = parseInt(parts[0]);
+      proteina = parts.slice(1).join('_'); // ej: 'pechuga', 'cerdo', 'carne'
+    }
   }
+
   const map=MENU_TO_INGR[baseId]; if(!map) return [];
-  const base=JSON.parse(JSON.stringify(INGREDIENTES_PLATOS[map.id]||[]));
+  let base=JSON.parse(JSON.stringify(INGREDIENTES_PLATOS[map.id]||[]));
+
+  // Si hay proteína seleccionada, reemplazar el ingrediente proteico principal
+  if(proteina && [32,33,34,35].includes(Number(baseId))){
+    const proteinaMap={
+      'pechuga':'Pechuga',
+      'cerdo':'Cerdo',
+      'carne':'Carne',
+    };
+    const nombreProteina = proteinaMap[proteina];
+    if(nombreProteina){
+      // Reemplazar Pechuga/Cerdo/Carne en los ingredientes
+      base = base.map(i=>{
+        if(['Pechuga','Cerdo','Carne'].includes(i.n)){
+          return {...i, n:nombreProteina};
+        }
+        return i;
+      });
+    }
+  }
+
   if(map.variante==='Gratín'||map.variante==='Gratin'){
     const q=base.find(i=>i.n==='Queso mozzarella');
     if(q) q.q+=30; else base.push({n:'Queso mozzarella',q:50,u:'g'});
