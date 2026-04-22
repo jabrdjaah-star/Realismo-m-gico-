@@ -982,6 +982,13 @@ function saveData(){
   }catch(e){ console.error('saveData error',e); }
 }
 
+// Guarda UN solo pedido en Firebase (más confiable para operaciones de crédito)
+function saveOrder(o){
+  try{
+    REF.orders.child(String(o.id)).set(o);
+  }catch(e){ console.error('saveOrder error',e); }
+}
+
 function savePreciosIngr(){
   REF.preciosIngr.set(preciosIngr);
 }
@@ -1499,8 +1506,9 @@ function toggleHistOrder(id){
   if(el) el.classList.toggle('open');
 }
 function eliminarDelHistorial(id){
-  orders=orders.filter(x=>x.id!==id);
-  saveData(); renderHistorial();
+  try{ REF.orders.child(String(id)).remove(); }catch(e){}
+  orders=orders.filter(x=>String(x.id)!==String(id));
+  renderHistorial();
 }
 
 // ── CANCELAR PEDIDO ──────────────────────────────────────────────────────────
@@ -1554,10 +1562,7 @@ function confirmAbono(){
   const o=orders.find(x=>String(x.id)===String(abonoOrderId)); if(!o)return;
   if(!o.abonos) o.abonos=[];
   o.abonos.push({amount, fecha:now(), payMethod:abonoMetodo, deudorName:o.deudorName||'Sin nombre'});
-  // Actualizar solo este pedido directamente en Firebase
-  try{
-    REF.orders.child(String(o.id)).set(o);
-  }catch(e){ console.error('Error guardando abono:',e); }
+  saveOrder(o);
   closeAbonoModal();
   renderHistorial();
 }
@@ -2010,14 +2015,17 @@ function confirmDeudorAndPay(){
 }
 
 function finalizePago(method, deudorName){
-  const o=orders.find(x=>x.id===billOrderId); if(!o)return;
+  const o=orders.find(x=>String(x.id)===String(billOrderId)); if(!o)return;
   o.status=method==='credito'?'credito':'paid';
   o.payMethod=method;
   o.closedAt=now();
   if(deudorName) o.deudorName=deudorName;
   if(method==='credito') o.abonos=[];
   if(o.tableId) tableStates[o.tableId]={status:'free'};
-  closeBill(); saveData(); renderPedidos(); renderMesas();
+  saveOrder(o);
+  REF.tables.set(tableStates);
+  REF.counter.set(orderCounter);
+  closeBill(); renderPedidos(); renderMesas();
 }
 
 // ── COSTOS: INGREDIENTES Y PRECIOS ───────────────────────────────────────────
