@@ -1554,8 +1554,12 @@ function confirmAbono(){
   const o=orders.find(x=>String(x.id)===String(abonoOrderId)); if(!o)return;
   if(!o.abonos) o.abonos=[];
   o.abonos.push({amount, fecha:now(), payMethod:abonoMetodo, deudorName:o.deudorName||'Sin nombre'});
+  // Actualizar solo este pedido directamente en Firebase
+  try{
+    REF.orders.child(String(o.id)).set(o);
+  }catch(e){ console.error('Error guardando abono:',e); }
   closeAbonoModal();
-  saveData(); renderHistorial();
+  renderHistorial();
 }
 function pagarTotalCredito(orderId){
   openAbonoModal(orderId);
