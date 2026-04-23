@@ -1164,7 +1164,7 @@ function orderCardHTML(o){
 }
 
 function sendToKitchen(id){
-  const o=orders.find(x=>x.id===id); if(!o)return;
+  const o=orders.find(x=>String(x.id)===String(id)); if(!o)return;
   o.status='sent';
   saveData(); renderPedidos(); renderKitchen(); updateBadge('kitchen',orders.filter(x=>x.status==='sent').length);
 }
@@ -1257,7 +1257,7 @@ function renderKitchen(){
     ${ready.length?`<div class="sec-label" style="color:#f39c12">🟡 Listas para servir (${ready.length})</div><div class="kitchen-grid">${ready.map(o=>cardHTML(o,true)).join('')}</div>`:''}
   </div>`;
 }
-function markReady(id){const o=orders.find(x=>x.id===id);if(!o)return;o.status='ready';if(o.tableId)tableStates[o.tableId]={status:'ready'};saveData();renderKitchen();renderMesas();}
+function markReady(id){const o=orders.find(x=>String(x.id)===String(id));if(!o)return;o.status='ready';if(o.tableId)tableStates[o.tableId]={status:'ready'};saveData();renderKitchen();renderMesas();}
 
 // ── RENDER HISTORIAL ──────────────────────────────────────────────────────────
 let histSubTab='efectivo';
@@ -1525,7 +1525,7 @@ function askCancelOrder(id){cancelOrderId=id;document.getElementById('cancel-mod
 function closeCancelModal(){document.getElementById('cancel-modal').classList.remove('open');cancelOrderId=null;}
 function confirmCancelOrder(){
   if(!cancelOrderId)return;
-  const o=orders.find(x=>x.id===cancelOrderId);
+  const o=orders.find(x=>String(x.id)===String(cancelOrderId));
   if(o&&o.tableId) tableStates[o.tableId]={status:'free'};
   orders=orders.filter(x=>x.id!==cancelOrderId);
   closeCancelModal();
@@ -1597,7 +1597,7 @@ function newOrder(tableId){
   openEditor();
 }
 function openOrderEditor(id){
-  const o=orders.find(x=>x.id===id); if(!o)return;
+  const o=orders.find(x=>String(x.id)===String(id)); if(!o)return;
   editing=JSON.parse(JSON.stringify(o));
   // Guardar snapshot de ítems anteriores para comparar si fue a cocina
   _prevItems = (o.status==='sent'||o.status==='ready')
@@ -1966,8 +1966,8 @@ function saveOrder(sendKitchen){
 
 // ── CUENTA ────────────────────────────────────────────────────────────────────
 function openBill(orderId){
-  billOrderId=orderId; selPayMethod=null;
-  const o=orders.find(x=>x.id===orderId); if(!o)return;
+  billOrderId=String(orderId); selPayMethod=null;
+  const o=orders.find(x=>String(x.id)===String(orderId)); if(!o)return;
   const total=totalOf(o);
   document.getElementById('bill-header-title').textContent='Cuenta · '+(o.tableId?`Mesa ${o.tableId}`:`Pedido #${o.number}`);
   document.getElementById('bill-body').innerHTML=o.items.map(i=>`
@@ -1997,7 +1997,7 @@ function selectPayMethod(method){
   ['efectivo','nequi','credito'].forEach(m=>document.getElementById('pay-'+m).classList.toggle('selected',m===method));
   const btn=document.getElementById('pay-confirm-btn');
   btn.classList.add('visible');
-  const o=orders.find(x=>x.id===billOrderId);
+  const o=orders.find(x=>String(x.id)===String(billOrderId));
   const total=o?totalOf(o):0;
   const labels={efectivo:`💵 Cobrar ${fmt(total)} en efectivo`,nequi:`📱 Cobrar ${fmt(total)} por Nequi`,credito:`📋 Registrar ${fmt(total)} a crédito`};
   btn.textContent=labels[method]||'Confirmar';
@@ -2346,12 +2346,11 @@ function renderCostos(){
     return true;
   });
   const totalGastos=gastosPeriodo.reduce((s,g)=>s+g.monto,0);
-  const totalCosto=totalCostoIngr+totalGastos;
-  const ganancia=totalVentas-totalCosto;
+  const totalCosto=totalGastos;
+  const ganancia=totalVentas-totalCostoIngr-totalGastos;
   const margen=totalVentas>0?((ganancia/totalVentas)*100).toFixed(1):0;
 
   const statsHTML=`<div class="costo-stat-bar">
-    <div class="costo-stat-box"><div class="costo-stat-num" style="color:#e74c3c">${fmt(Math.round(totalCostoIngr))}</div><div class="costo-stat-lbl">🧂 Ingredientes</div></div>
     <div class="costo-stat-box"><div class="costo-stat-num" style="color:#e67e22">${fmt(Math.round(totalGastos))}</div><div class="costo-stat-lbl">🧾 Gastos</div></div>
     <div class="costo-stat-box"><div class="costo-stat-num" style="color:#27ae60">${fmt(Math.round(ganancia))}</div><div class="costo-stat-lbl">✅ Ganancia neta</div></div>
     <div class="costo-stat-box"><div class="costo-stat-num" style="color:#2980b9">${fmt(totalVentas)}</div><div class="costo-stat-lbl">📦 Ventas</div></div>
@@ -2414,7 +2413,7 @@ function renderCostos(){
         <div class="ingr-costo-sub"><span>Consumido: ${qty}</span><span>${pct}% del costo</span></div>
       </div>`;
     }).join('');
-    el.innerHTML=`<div class="costos-wrap">${statsHTML}${periodoHTML}${subTabsHTML}${alertHTML}<div class="costos-section-title">🧂 Costo por ingrediente</div>${ingrsHTML||'<div style="text-align:center;color:#ccc;padding:1rem">Sin datos</div>'}</div>`;
+    el.innerHTML=`<div class="costos-wrap">${statsHTML}${periodoHTML}${subTabsHTML}${alertHTML}<div class="costos-section-title">🧂 Costo por ingrediente</div><div style="background:#fff;border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 5px rgba(0,0,0,.06);border-left:4px solid #e74c3c;"><span style="font-weight:800;font-size:.88rem;color:#555">🧂 Total ingredientes</span><span style="font-family:'Bebas Neue';font-size:1.3rem;color:#e74c3c;letter-spacing:1px">${fmt(Math.round(totalCostoIngr))}</span></div>${ingrsHTML||'<div style="text-align:center;color:#ccc;padding:1rem">Sin datos</div>'}</div>`;
 
   } else {
     const platoMap={};
