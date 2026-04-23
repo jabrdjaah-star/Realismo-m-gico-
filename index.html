@@ -2347,14 +2347,13 @@ function renderCostos(){
   });
   const totalGastos=gastosPeriodo.reduce((s,g)=>s+g.monto,0);
   const totalCosto=totalGastos;
-  const ganancia=totalVentas-totalCostoIngr-totalGastos;
+  const ganancia=totalVentas-totalGastos;
   const margen=totalVentas>0?((ganancia/totalVentas)*100).toFixed(1):0;
 
   const statsHTML=`<div class="costo-stat-bar">
     <div class="costo-stat-box"><div class="costo-stat-num" style="color:#e67e22">${fmt(Math.round(totalGastos))}</div><div class="costo-stat-lbl">🧾 Gastos</div></div>
     <div class="costo-stat-box"><div class="costo-stat-num" style="color:#27ae60">${fmt(Math.round(ganancia))}</div><div class="costo-stat-lbl">✅ Ganancia neta</div></div>
     <div class="costo-stat-box"><div class="costo-stat-num" style="color:#2980b9">${fmt(totalVentas)}</div><div class="costo-stat-lbl">📦 Ventas</div></div>
-    <div class="costo-stat-box"><div class="costo-stat-num" style="color:#e74c3c">${fmt(Math.round(totalCosto))}</div><div class="costo-stat-lbl">💸 Costo total</div></div>
     <div class="costo-stat-box"><div class="costo-stat-num" style="color:#8e44ad">${margen}%</div><div class="costo-stat-lbl">📊 Margen</div></div>
   </div>`;
 
