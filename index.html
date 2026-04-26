@@ -114,6 +114,15 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 .cats-bar{display:flex;gap:5px;padding:7px 8px;overflow-x:auto;background:#f8f8f8;border-bottom:1px solid #eee;flex-shrink:0;}
 .cat-btn{border:none;border-radius:20px;padding:5px 11px;font-weight:700;font-size:.72rem;cursor:pointer;white-space:nowrap;font-family:'Nunito',sans-serif;}
 .cat-btn:active{transform:scale(.93);}
+.order-tab-wrap{padding:4px 0 12px;}
+.order-tab-item{display:flex;align-items:center;gap:10px;background:#fff;border-radius:10px;padding:10px 12px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.07);}
+.order-tab-item-info{flex:1;}
+.order-tab-item-name{font-weight:800;font-size:.85rem;color:#222;}
+.order-tab-item-price{font-size:.75rem;color:#888;}
+.order-tab-qty-ctrl{display:flex;align-items:center;gap:8px;}
+.order-tab-qty-btn{width:28px;height:28px;border-radius:50%;border:none;font-size:1rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;}
+.order-tab-qty-num{font-weight:900;font-size:.95rem;min-width:18px;text-align:center;}
+.order-tab-total{background:#f8f9ff;border-radius:10px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;margin-top:4px;border-top:2px solid #eee;}
 .cat-note-bar{padding:4px 12px;background:#fff9e6;font-size:.68rem;color:#e67e00;font-weight:700;border-bottom:1px solid #f5e6c0;flex-shrink:0;display:none;}
 .items-grid{flex:1;overflow-y:auto;padding:8px 10px 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:7px;align-content:start;}
 .item-tile{background:#fafafa;border:1.5px solid #eee;border-radius:10px;padding:10px 8px;cursor:pointer;text-align:center;position:relative;transition:all .15s;}
@@ -216,6 +225,16 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 .pay-confirm-btn{width:100%;background:#27ae60;border:none;border-radius:10px;padding:14px;color:#fff;font-weight:800;font-size:1rem;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:4px;display:none;}
 .pay-confirm-btn.visible{display:block;}
 .pay-confirm-btn:active{transform:scale(.97);}
+.mixto-panel{display:none;background:#f8f9ff;border-radius:12px;border:2px solid #2980b9;padding:14px;margin-bottom:8px;}
+.mixto-panel.open{display:block;}
+.mixto-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.mixto-row:last-child{margin-bottom:0;}
+.mixto-met-btn{flex:1;border:2px solid #ddd;border-radius:8px;padding:8px 4px;font-weight:800;font-size:.78rem;cursor:pointer;font-family:'Nunito',sans-serif;background:#fff;color:#555;}
+.mixto-met-btn.sel{border-color:#2980b9;background:#e8f4fd;color:#2980b9;}
+.mixto-amount{flex:1.2;border:1.5px solid #ddd;border-radius:8px;padding:9px 10px;font-size:.9rem;font-family:'Nunito',sans-serif;outline:none;color:#333;}
+.mixto-amount:focus{border-color:#2980b9;}
+.mixto-label{font-size:.72rem;font-weight:800;color:#555;margin-bottom:5px;}
+.mixto-resto{font-size:.78rem;color:#e74c3c;font-weight:800;margin-top:4px;text-align:right;}
 
 /* ── MENÚ LECTURA ── */
 .menu-view{display:flex;flex-direction:column;height:calc(100vh - 110px);}
@@ -827,12 +846,40 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
           <div class="pay-method-desc">Queda debiendo al restaurante</div>
         </div>
       </button>
+      <button class="pay-method-btn" onclick="selectPayMethod('mixto')" id="pay-mixto">
+        <span class="pay-method-icon">💳</span>
+        <div class="pay-method-info">
+          <div class="pay-method-name">Pago mixto</div>
+          <div class="pay-method-desc">Combina dos formas de pago</div>
+        </div>
+      </button>
+      <div class="mixto-panel" id="mixto-panel">
+        <div class="mixto-label">Primer pago</div>
+        <div class="mixto-row">
+          <button class="mixto-met-btn" id="mx-btn-1-efectivo" onclick="selMixtoMet(1,'efectivo')">💵 Efectivo</button>
+          <button class="mixto-met-btn" id="mx-btn-1-nequi"    onclick="selMixtoMet(1,'nequi')">📱 Nequi</button>
+          <input  class="mixto-amount" id="mx-amount-1" type="number" placeholder="Monto $" min="0" oninput="updateMixtoResto()"/>
+        </div>
+        <div class="mixto-label">Segundo pago</div>
+        <div class="mixto-row">
+          <button class="mixto-met-btn" id="mx-btn-2-efectivo" onclick="selMixtoMet(2,'efectivo')">💵 Efectivo</button>
+          <button class="mixto-met-btn" id="mx-btn-2-nequi"    onclick="selMixtoMet(2,'nequi')">📱 Nequi</button>
+          <button class="mixto-met-btn" id="mx-btn-2-credito"  onclick="selMixtoMet(2,'credito')">📋 Crédito</button>
+          <input  class="mixto-amount" id="mx-amount-2" type="number" placeholder="Resto $" min="0" readonly style="background:#f0f0f0;color:#888"/>
+        </div>
+        <div class="mixto-resto" id="mixto-resto-label"></div>
+      </div>
       <button class="pay-confirm-btn" id="pay-confirm-btn" onclick="confirmPayment()">Confirmar pago</button>
     </div>
   </div>
 </div>
 
 <script>
+// ── HELPERS DE ESTADO ────────────────────────────────────────────────────────
+const CLOSED_STATUSES = ['paid','credito','mixto-credito'];
+const isClosed  = o => CLOSED_STATUSES.includes(o.status);
+const isActive  = o => !isClosed(o);
+
 // ── MENÚ ──────────────────────────────────────────────────────────────────────
 const MENU = [
   { id:"hamburguesas", name:"Hamburguesas", icon:"🍔", items:[
@@ -1022,7 +1069,7 @@ function loadData(){
     if(t==='mesas')     renderMesas();
     if(t==='historial') renderHistorial();
     if(t==='costos')    renderCostos();
-    updateBadge('pedidos', orders.filter(o=>o.status!=='paid'&&o.status!=='credito').length);
+    updateBadge('pedidos', orders.filter(o=>isActive(o)).length);
     updateBadge('kitchen', orders.filter(o=>o.status==='sent').length);
   });
 
@@ -1109,7 +1156,7 @@ function switchTab(t){
 
 // ── RENDER PEDIDOS ────────────────────────────────────────────────────────────
 function renderPedidos(){
-  const active=orders.filter(o=>o.status!=='paid'&&o.status!=='credito');
+  const active=orders.filter(o=>isActive(o));
   updateBadge('pedidos',active.length);
   const el=document.getElementById('view-pedidos');
   if(!active.length){el.innerHTML=`<div class="empty"><div class="empty-icon">🍽</div><div class="empty-title">Sin pedidos activos</div><div class="empty-sub">Toca <b>+</b> para crear uno</div></div>`;return;}
@@ -1199,7 +1246,7 @@ function renderMesas(){
   </div>`;
 }
 
-function openTableOrder(tid){const ex=orders.find(o=>o.tableId===tid&&o.status!=='paid'&&o.status!=='credito');if(ex)openOrderEditor(ex.id);else newOrder(tid);}
+function openTableOrder(tid){const ex=orders.find(o=>o.tableId===tid&&isActive(o));if(ex)openOrderEditor(ex.id);else newOrder(tid);}
 function openBillByTable(tid){const o=orders.find(x=>x.tableId===tid&&x.status!=='paid'&&x.status!=='credito');if(o)openBill(o.id);}
 
 // ── RENDER MENÚ LECTURA ───────────────────────────────────────────────────────
@@ -1292,7 +1339,7 @@ const PERIODO_LABELS={hoy:'Hoy',ayer:'Ayer',semana:'Esta semana',mes:'Este mes',
 
 function renderHistorial(){
   const el=document.getElementById('view-historial');
-  const allPaid=orders.filter(o=>o.status==='paid'||o.status==='credito');
+  const allPaid=orders.filter(o=>isClosed(o));
   const paid=filtrarPorPeriodo(allPaid);
 
   // selector de periodo
@@ -1305,13 +1352,19 @@ function renderHistorial(){
   </div>`;
 
   // stats del período (incluye abonos de créditos)
+  const mixtoOrders=paid.filter(o=>o.payMethod==='mixto'&&o.pagos);
   const totalEfectivo=paid.filter(o=>o.status==='paid'&&o.payMethod==='efectivo').reduce((s,o)=>s+totalOf(o),0)
-    + orders.filter(o=>o.status==='credito').flatMap(o=>(o.abonos||[]).filter(a=>a.payMethod==='efectivo')).reduce((s,a)=>s+a.amount,0);
+    + orders.filter(o=>o.status==='credito').flatMap(o=>(o.abonos||[]).filter(a=>a.payMethod==='efectivo')).reduce((s,a)=>s+a.amount,0)
+    + mixtoOrders.flatMap(o=>o.pagos.filter(p=>p.method==='efectivo')).reduce((s,p)=>s+p.amount,0);
   const totalNequi=paid.filter(o=>o.status==='paid'&&o.payMethod==='nequi').reduce((s,o)=>s+totalOf(o),0)
-    + orders.filter(o=>o.status==='credito').flatMap(o=>(o.abonos||[]).filter(a=>a.payMethod==='nequi')).reduce((s,a)=>s+a.amount,0);
-  const creditOrders=orders.filter(o=>o.status==='credito');
+    + orders.filter(o=>o.status==='credito').flatMap(o=>(o.abonos||[]).filter(a=>a.payMethod==='nequi')).reduce((s,a)=>s+a.amount,0)
+    + mixtoOrders.flatMap(o=>o.pagos.filter(p=>p.method==='nequi')).reduce((s,p)=>s+p.amount,0);
+  const creditOrders=orders.filter(o=>o.status==='credito'||o.status==='mixto-credito');
   const totalAbonado=creditOrders.reduce((s,o)=>s+(o.abonos||[]).reduce((a,ab)=>a+ab.amount,0),0);
-  const totalPendiente=creditOrders.reduce((s,o)=>s+totalOf(o),0)-totalAbonado;
+  const totalPendiente=creditOrders.reduce((s,o)=>{
+    const creditAmt=(o.payMethod==='mixto'&&o.pagos)?(o.pagos.find(p=>p.method==='credito')?.amount||totalOf(o)):totalOf(o);
+    return s+creditAmt;
+  },0)-totalAbonado;
 
   const mainTabsHTML=`<div class="hist-tabs">
     <button class="hist-tab-btn" onclick="setHistTab('lista')" style="background:${histTab==='lista'?'#2980b9':'#eee'};color:${histTab==='lista'?'#fff':'#555'}">📋 Lista</button>
@@ -1349,11 +1402,12 @@ function renderHistorial(){
   const subTabsHTML=`<div class="hist-subtabs">
     <button class="hist-subtab-btn" onclick="setHistSubTab('efectivo')" style="background:${histSubTab==='efectivo'?'#27ae60':'#eee'};color:${histSubTab==='efectivo'?'#fff':'#555'}">💵 Efectivo</button>
     <button class="hist-subtab-btn" onclick="setHistSubTab('nequi')" style="background:${histSubTab==='nequi'?'#2980b9':'#eee'};color:${histSubTab==='nequi'?'#fff':'#555'}">📱 Nequi</button>
+    <button class="hist-subtab-btn" onclick="setHistSubTab('mixto')" style="background:${histSubTab==='mixto'?'#e67e22':'#eee'};color:${histSubTab==='mixto'?'#fff':'#555'}">💳 Mixto</button>
     <button class="hist-subtab-btn" onclick="setHistSubTab('creditos')" style="background:${histSubTab==='creditos'?'#8e44ad':'#eee'};color:${histSubTab==='creditos'?'#fff':'#555'}">📋 Créditos</button>
   </div>`;
 
   if(histSubTab==='creditos'){
-    const allCredits=orders.filter(o=>o.status==='credito');
+    const allCredits=orders.filter(o=>o.status==='credito'||o.status==='mixto-credito');
     if(!allCredits.length){
       el.innerHTML=`<div class="historial-wrap">${mainTabsHTML}${periodoHTML}${statsHTML}${subTabsHTML}<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">Sin créditos</div></div></div>`;
       return;
@@ -1364,7 +1418,9 @@ function renderHistorial(){
       const key=(o.deudorName||'Sin nombre').trim().toLowerCase();
       if(!grupos[key]) grupos[key]={nombre:o.deudorName||'Sin nombre',pedidos:[],totalDeuda:0,totalAbonado:0};
       grupos[key].pedidos.push(o);
-      grupos[key].totalDeuda+=totalOf(o);
+      const creditAmount=(o.payMethod==='mixto'&&o.pagos)?(o.pagos.find(p=>p.method==='credito')?.amount||totalOf(o)):totalOf(o);
+      grupos[key].totalDeuda+=creditAmount;
+      grupos[key]._isMixto=o.payMethod==='mixto';
       grupos[key].totalAbonado+=(o.abonos||[]).reduce((s,a)=>s+a.amount,0);
     });
     const gruposHTML=Object.values(grupos).sort((a,b)=>(b.totalDeuda-b.totalAbonado)-(a.totalDeuda-a.totalAbonado)).map(g=>{
@@ -1405,10 +1461,58 @@ function renderHistorial(){
     return;
   }
 
+  // ── PESTAÑA MIXTO ──────────────────────────────────────────────────────────
+  if(histSubTab==='mixto'){
+    const mixtos=paid.filter(o=>o.payMethod==='mixto');
+    const totalMixto=mixtos.reduce((s,o)=>s+totalOf(o),0);
+    const summaryMixto=`<div style="background:#fff;border-radius:10px;padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 5px rgba(0,0,0,.06)">
+      <span style="font-weight:800;font-size:.85rem;color:#555">💳 Total pagos mixtos</span>
+      <span style="font-family:'Bebas Neue';font-size:1.4rem;color:#e67e22;letter-spacing:1px">${fmt(totalMixto)}</span>
+    </div>`;
+    if(!mixtos.length){
+      el.innerHTML=`<div class="historial-wrap">${mainTabsHTML}${periodoHTML}${statsHTML}${subTabsHTML}${summaryMixto}<div class="empty" style="padding:2rem"><div class="empty-icon">💳</div><div class="empty-title">Sin pagos mixtos · ${PERIODO_LABELS[histPeriodo]}</div></div></div>`;
+      return;
+    }
+    const mixtosHTML=mixtos.sort((a,b)=>{
+      const pa=a.closedAt?.match(/(\d+)\/(\d+)\/(\d+),\s*(\d+):(\d+)/);
+      const pb=b.closedAt?.match(/(\d+)\/(\d+)\/(\d+),\s*(\d+):(\d+)/);
+      if(!pa||!pb) return 0;
+      return new Date(pb[3],pb[2]-1,pb[1],pb[4],pb[5])-new Date(pa[3],pa[2]-1,pa[1],pa[4],pa[5]);
+    }).map(o=>{
+      const total=totalOf(o);
+      const pagosLabel=(o.pagos||[]).map(p=>`${p.method==='nequi'?'📱':'💵'} ${p.method==='nequi'?'Nequi':'Efectivo'} ${fmt(p.amount)}`).join(' + ');
+      const creditPago=(o.pagos||[]).find(p=>p.method==='credito');
+      const creditLine=creditPago?`<div style="font-size:.72rem;color:#8e44ad;font-weight:700;margin-top:2px">📋 Crédito ${fmt(creditPago.amount)}${o.deudorName?' · '+o.deudorName:''}</div>`:'';
+      return `<div class="hist-order">
+        <div class="hist-order-header" onclick="toggleHistOrder('mx${o.id}')">
+          <div>
+            <div class="hist-order-num">Pedido #${o.number} ${o.tableId?`· Mesa ${o.tableId}`:''}</div>
+            <div class="hist-order-meta">${o.closedAt||''}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="hist-order-total" style="color:#e67e22">${fmt(total)}</div>
+            <span class="pay-badge" style="background:#fdf2e9;color:#e67e22">💳 Mixto</span>
+            ${creditLine}
+          </div>
+        </div>
+        <div class="hist-order-body" id="hist-body-mx${o.id}">
+          ${o.items.map(i=>`<div class="hist-item-row"><span>${i.qty} ${i.name}${i.note?` <span style="color:#e67e00;font-size:.7rem">(${i.note})</span>`:''}</span><span>${fmt(i.price*i.qty)}</span></div>`).join('')}
+          <div style="margin-top:8px;padding:8px;background:#fdf2e9;border-radius:8px;font-size:.78rem;font-weight:700;color:#e67e22">${pagosLabel}</div>
+          ${creditPago&&o.deudorName?`<div style="margin-top:4px;padding:6px 8px;background:#f5eef8;border-radius:8px;font-size:.75rem;color:#8e44ad;font-weight:700">📋 Crédito a nombre de: ${o.deudorName}</div>`:''}
+          <div style="margin-top:10px;text-align:right">
+            <button onclick="if(confirm('¿Eliminar este pedido del historial?'))eliminarDelHistorial(${o.id})" style="background:#fdecea;color:#c0392b;border:none;border-radius:7px;padding:7px 12px;font-weight:800;font-size:.75rem;cursor:pointer;font-family:'Nunito',sans-serif;">🗑 Eliminar</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    el.innerHTML=`<div class="historial-wrap">${mainTabsHTML}${periodoHTML}${statsHTML}${subTabsHTML}${summaryMixto}${mixtosHTML}</div>`;
+    return;
+  }
+
   // Efectivo o Nequi
   const method=histSubTab;
   // Pedidos normales pagados en este método
-  const filtered=paid.filter(o=>o.status==='paid'&&o.payMethod===method);
+  const filtered=paid.filter(o=>['paid','mixto-credito'].includes(o.status)&&o.payMethod===method);
   // Abonos de créditos pagados en este método (de TODOS los créditos, filtrados por fecha del abono)
   const allCreditOrders=orders.filter(o=>o.status==='credito');
   const abonosDelMetodo=[];
@@ -1530,7 +1634,7 @@ function confirmCancelOrder(){
   orders=orders.filter(x=>x.id!==cancelOrderId);
   closeCancelModal();
   saveData(); renderPedidos(); renderMesas();
-  updateBadge('pedidos',orders.filter(o=>o.status!=='paid'&&o.status!=='credito').length);
+  updateBadge('pedidos',orders.filter(o=>isActive(o)).length);
   updateBadge('kitchen',orders.filter(o=>o.status==='sent').length);
 }
 
@@ -1696,8 +1800,43 @@ function renderEditor(){
   document.getElementById('editor-sub').textContent=qty>0?`${qty} ítems · ${fmt(tot)}`:'Agrega ítems del menú';
   document.getElementById('btn-mesa-sel').textContent='🪑 '+(editing.tableId?`Mesa ${editing.tableId}`:'Sin mesa');
   const cat=MENU.find(c=>c.id===activeCat);
-  document.getElementById('cats-bar').innerHTML=MENU.map(c=>`<button class="cat-btn" onclick="setCat('${c.id}')" style="background:${activeCat===c.id?'#e74c3c':'#eee'};color:${activeCat===c.id?'#fff':'#555'}">${c.icon} ${c.name}</button>`).join('');
+  const qty_badge = editing.items.reduce((s,i)=>s+i.qty,0);
+  document.getElementById('cats-bar').innerHTML=
+    MENU.map(c=>`<button class="cat-btn" onclick="setCat('${c.id}')" style="background:${activeCat===c.id?'#e74c3c':'#eee'};color:${activeCat===c.id?'#fff':'#555'}">${c.icon} ${c.name}</button>`).join('')
+    + `<button class="cat-btn" onclick="setCat('pedido')" style="background:${activeCat==='pedido'?'#27ae60':'#eee'};color:${activeCat==='pedido'?'#fff':'#555'};position:relative">🛒 Pedido${qty_badge>0?`<span style="position:absolute;top:-5px;right:-5px;background:#e74c3c;color:#fff;border-radius:50%;font-size:.6rem;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-weight:900">${qty_badge}</span>`:''}</button>`;
   const nb=document.getElementById('cat-note-bar');
+
+  // ── PESTAÑA PEDIDO ──────────────────────────────────────────────────────────
+  if(activeCat==='pedido'){
+    nb.style.display='none';
+    const items=editing.items;
+    if(!items.length){
+      document.getElementById('items-grid').innerHTML='<div style="text-align:center;color:#ccc;padding:2rem 1rem"><div style="font-size:2.5rem">🛒</div><div style="font-weight:800;margin-top:8px">El pedido está vacío</div><div style="font-size:.8rem;margin-top:4px">Agrega ítems desde las otras pestañas</div></div>';
+      return;
+    }
+    const subtotal=totalOf(editing);
+    const rowsHTML=items.map(it=>`
+      <div class="order-tab-item">
+        <div class="order-tab-item-info">
+          <div class="order-tab-item-name">${it.name}</div>
+          <div class="order-tab-item-price">${fmt(it.price)} c/u${it.note?` · <span style="color:#e67e00">${it.note}</span>`:''}</div>
+        </div>
+        <div class="order-tab-qty-ctrl">
+          <button class="order-tab-qty-btn" style="background:#fdecea;color:#c0392b" onclick="changeQtyTab(${it.itemId},-1)">−</button>
+          <span class="order-tab-qty-num">${it.qty}</span>
+          <button class="order-tab-qty-btn" style="background:#eafaf1;color:#27ae60" onclick="changeQtyTab(${it.itemId},1)">+</button>
+        </div>
+        <div style="font-family:'Bebas Neue';font-size:1.1rem;color:#2980b9;min-width:60px;text-align:right">${fmt(it.price*it.qty)}</div>
+      </div>`).join('');
+    document.getElementById('items-grid').innerHTML=`<div class="order-tab-wrap">${rowsHTML}
+      <div class="order-tab-total">
+        <span style="font-weight:800;color:#555">Total</span>
+        <span style="font-family:'Bebas Neue';font-size:1.5rem;color:#27ae60">${fmt(subtotal)}</span>
+      </div>
+    </div>`;
+    return;
+  }
+
   if(cat?.note){nb.textContent='⚡ '+cat.note;nb.style.display='block';}else nb.style.display='none';
   document.getElementById('items-grid').innerHTML=cat.items.map(item=>{
     const inO=editing.items.find(i=>i.itemId===item.id);
@@ -1717,6 +1856,14 @@ function renderEditor(){
 }
 
 function setCat(id){activeCat=id;renderEditor();}
+
+function changeQtyTab(itemId, delta){
+  const idx=editing.items.findIndex(i=>i.itemId===itemId);
+  if(idx<0) return;
+  editing.items[idx].qty+=delta;
+  if(editing.items[idx].qty<=0) editing.items.splice(idx,1);
+  renderEditor();
+}
 
 // Ítems que requieren elegir proteína
 const PROTEINA_OPTS = {
@@ -1992,10 +2139,29 @@ function openBill(orderId){
 }
 function closeBill(){document.getElementById('bill-screen').classList.remove('open');billOrderId=null;selPayMethod=null;}
 
+// mixto state
+let mixtoMet1=null, mixtoMet2=null;
+
 function selectPayMethod(method){
   selPayMethod=method;
-  ['efectivo','nequi','credito'].forEach(m=>document.getElementById('pay-'+m).classList.toggle('selected',m===method));
+  ['efectivo','nequi','credito','mixto'].forEach(m=>{
+    const el=document.getElementById('pay-'+m); if(el) el.classList.toggle('selected',m===method);
+  });
+  const panel=document.getElementById('mixto-panel');
   const btn=document.getElementById('pay-confirm-btn');
+  if(method==='mixto'){
+    panel.classList.add('open');
+    btn.classList.add('visible');
+    btn.textContent='💳 Confirmar pago mixto';
+    mixtoMet1=null; mixtoMet2=null;
+    document.getElementById('mx-amount-1').value='';
+    document.getElementById('mx-amount-2').value='';
+    document.getElementById('mixto-resto-label').textContent='';
+    ['efectivo','nequi'].forEach(m=>document.getElementById('mx-btn-1-'+m).classList.remove('sel'));
+    ['efectivo','nequi','credito'].forEach(m=>document.getElementById('mx-btn-2-'+m).classList.remove('sel'));
+    return;
+  }
+  panel.classList.remove('open');
   btn.classList.add('visible');
   const o=orders.find(x=>String(x.id)===String(billOrderId));
   const total=o?totalOf(o):0;
@@ -2003,16 +2169,51 @@ function selectPayMethod(method){
   btn.textContent=labels[method]||'Confirmar';
 }
 
+function selMixtoMet(slot, met){
+  if(slot===1){
+    mixtoMet1=met;
+    ['efectivo','nequi'].forEach(m=>document.getElementById('mx-btn-1-'+m).classList.toggle('sel',m===met));
+    updateMixtoResto();
+  } else {
+    mixtoMet2=met;
+    ['efectivo','nequi','credito'].forEach(m=>document.getElementById('mx-btn-2-'+m).classList.toggle('sel',m===met));
+  }
+}
+
+function updateMixtoResto(){
+  const o=orders.find(x=>String(x.id)===String(billOrderId)); if(!o) return;
+  const total=totalOf(o);
+  const v1=parseFloat(document.getElementById('mx-amount-1').value)||0;
+  const resto=Math.max(0, total-v1);
+  document.getElementById('mx-amount-2').value=resto||'';
+  document.getElementById('mixto-resto-label').textContent=v1>0?`Resta: ${fmt(resto)}`:'';
+}
+
 function confirmPayment(){
   if(!billOrderId||!selPayMethod)return;
-  if(selPayMethod==='credito'){
-    openDeudorModal();
+  if(selPayMethod==='credito'){ openDeudorModal(); return; }
+  if(selPayMethod==='mixto'){
+    if(!mixtoMet1){ alert('Selecciona el método del primer pago'); return; }
+    if(!mixtoMet2){ alert('Selecciona el método del segundo pago'); return; }
+    if(mixtoMet1===mixtoMet2){ alert('Los dos métodos deben ser diferentes'); return; }
+    const o=orders.find(x=>String(x.id)===String(billOrderId)); if(!o) return;
+    const total=totalOf(o);
+    const monto1=parseFloat(document.getElementById('mx-amount-1').value)||0;
+    if(monto1<=0||monto1>=total){ alert('El primer monto debe ser mayor a 0 y menor al total'); return; }
+    const monto2=total-monto1;
+    if(mixtoMet2==='credito'){
+      openDeudorModal(true, mixtoMet1, monto1, monto2);
+    } else {
+      finalizePagoMixto(mixtoMet1, monto1, mixtoMet2, monto2, null);
+    }
     return;
   }
   finalizePago(selPayMethod, null);
 }
 
-function openDeudorModal(){
+let _mixtoPreCredit=null; // {met1,m1,m2} when second payment is credito
+function openDeudorModal(isMixto=false, met1=null, m1=0, m2=0){
+  _mixtoPreCredit = isMixto ? {met1,m1,m2} : null;
   document.getElementById('deudor-name-input').value='';
   document.getElementById('deudor-modal').classList.add('open');
   setTimeout(()=>document.getElementById('deudor-name-input').focus(),100);
@@ -2022,7 +2223,13 @@ function confirmDeudorAndPay(){
   const name=document.getElementById('deudor-name-input').value.trim();
   if(!name){document.getElementById('deudor-name-input').focus();return;}
   closeDeudorModal();
-  finalizePago('credito', name);
+  if(_mixtoPreCredit){
+    const {met1,m1,m2}=_mixtoPreCredit;
+    finalizePagoMixto(met1, m1, 'credito', m2, name);
+    _mixtoPreCredit=null;
+  } else {
+    finalizePago('credito', name);
+  }
 }
 
 function finalizePago(method, deudorName){
@@ -2043,6 +2250,20 @@ function finalizePago(method, deudorName){
     REF.counter.set(orderCounter);
     renderPedidos(); renderMesas();
   }).catch(()=>{});
+}
+
+// ── PAGO MIXTO ────────────────────────────────────────────────────────────────
+function finalizePagoMixto(met1, monto1, met2, monto2, deudorName){
+  const o=orders.find(x=>String(x.id)===String(billOrderId));
+  if(!o){ alert('⚠️ No se encontró el pedido.'); return; }
+  o.status = met2==='credito' ? 'mixto-credito' : 'paid';
+  o.payMethod = 'mixto';
+  o.pagos = [{method:met1, amount:monto1}, {method:met2, amount:monto2}];
+  o.closedAt = now();
+  if(deudorName){ o.deudorName=deudorName; o.abonos=[]; }
+  if(o.tableId) tableStates[o.tableId]={status:'free'};
+  closeBill();
+  saveOrder(o).then(()=>{ REF.tables.set(tableStates); REF.counter.set(orderCounter); renderPedidos(); renderMesas(); }).catch(()=>{});
 }
 
 // ── COSTOS: INGREDIENTES Y PRECIOS ───────────────────────────────────────────
@@ -2310,7 +2531,7 @@ function renderCostos(){
   // ── Filtro de período (reutiliza filtrarPorPeriodo con costoPeriodo) ──
   const savedHP=histPeriodo;
   histPeriodo=costoPeriodo; // swap temporal para reutilizar la función
-  const allPaid=orders.filter(o=>o.status==='paid'||o.status==='credito');
+  const allPaid=orders.filter(o=>isClosed(o));
   const paidOrders=filtrarPorPeriodo(allPaid);
   histPeriodo=savedHP; // restaurar
 
@@ -2324,7 +2545,7 @@ function renderCostos(){
   </div>`;
 
   // Calcular totales del período filtrado
-  const totalVentas=paidOrders.filter(o=>o.status==='paid').reduce((s,o)=>s+totalOf(o),0);
+  const totalVentas=paidOrders.filter(o=>isClosed(o)).reduce((s,o)=>s+totalOf(o),0);
   const totalCostoIngr=paidOrders.reduce((s,o)=>s+costoPedido(o),0);
   // Gastos del mismo período
   const ahora2=new Date();
@@ -2883,15 +3104,18 @@ function confirmarAdicion(){
 
 // ── EXPORTAR HISTORIAL A PDF ──────────────────────────────────────────────────
 function exportarHistorialPDF(){
-  const allPaid = orders.filter(o=>o.status==='paid'||o.status==='credito');
+  const allPaid = orders.filter(o=>isClosed(o));
   const paid    = filtrarPorPeriodo(allPaid);
   const periodo = PERIODO_LABELS[histPeriodo] || histPeriodo;
 
-  const totalEfectivo = paid.filter(o=>o.status==='paid'&&o.payMethod==='efectivo').reduce((s,o)=>s+totalOf(o),0);
-  const totalNequi    = paid.filter(o=>o.status==='paid'&&o.payMethod==='nequi').reduce((s,o)=>s+totalOf(o),0);
-  const totalGeneral  = paid.filter(o=>o.status==='paid').reduce((s,o)=>s+totalOf(o),0);
-  const creditOrders  = orders.filter(o=>o.status==='credito');
-  const totalPendiente= creditOrders.reduce((s,o)=>s+totalOf(o),0)
+  const _mixto2=paid.filter(o=>o.payMethod==='mixto'&&o.pagos);
+  const totalEfectivo = paid.filter(o=>isClosed(o)&&o.payMethod==='efectivo').reduce((s,o)=>s+totalOf(o),0)
+    + _mixto2.flatMap(o=>o.pagos.filter(p=>p.method==='efectivo')).reduce((s,p)=>s+p.amount,0);
+  const totalNequi    = paid.filter(o=>isClosed(o)&&o.payMethod==='nequi').reduce((s,o)=>s+totalOf(o),0)
+    + _mixto2.flatMap(o=>o.pagos.filter(p=>p.method==='nequi')).reduce((s,p)=>s+p.amount,0);
+  const totalGeneral  = paid.filter(o=>isClosed(o)).reduce((s,o)=>s+totalOf(o),0);
+  const creditOrders  = orders.filter(o=>o.status==='credito'||o.status==='mixto-credito');
+  const totalPendiente= creditOrders.reduce((s,o)=>s+((o.payMethod==='mixto'&&o.pagos)?(o.pagos.find(p=>p.method==='credito')?.amount||totalOf(o)):totalOf(o)),0)
     - creditOrders.reduce((s,o)=>s+(o.abonos||[]).reduce((a,ab)=>a+ab.amount,0),0);
 
   // Resumen por ítems
@@ -2958,8 +3182,8 @@ function exportarHistorialPDF(){
 <table>
   <tr><th>#</th><th>Fecha</th><th>Mesa</th><th>Items</th><th>Pago</th><th class="num">Total</th></tr>
   ${listaPedidos.map(o=>{
-    const metodo = o.status==='credito'?'cre':o.payMethod==='nequi'?'neq':'efe';
-    const label  = o.status==='credito'?'Crédito':o.payMethod==='nequi'?'Nequi':'Efectivo';
+    const metodo = o.status==='credito'||o.status==='mixto-credito'?'cre':o.payMethod==='mixto'?'mix':o.payMethod==='nequi'?'neq':'efe';
+    const label  = o.status==='credito'?'Crédito':o.status==='mixto-credito'?'Mixto+Crédito':o.payMethod==='mixto'?'💳 '+((o.pagos||[]).map(p=>(p.method==='nequi'?'Nequi':'Efectivo')+' '+fmt(p.amount)).join(' + ')):o.payMethod==='nequi'?'Nequi':'Efectivo';
     const items  = o.items.map(i=>`${i.qty}×${i.name}`).join(', ');
     return `<tr>
       <td>#${o.number||'-'}</td>
