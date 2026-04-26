@@ -1337,6 +1337,27 @@ function filtrarPorPeriodo(ordersList){
 
 const PERIODO_LABELS={hoy:'Hoy',ayer:'Ayer',semana:'Esta semana',mes:'Este mes','7dias':'Últimos 7 días','30dias':'Últimos 30 días','90dias':'Últimos 90 días'};
 
+// Verifica si un string de fecha (DD/MM/YYYY o DD/MM/YYYY, HH:MM) cae en el período activo
+function fechaEnPeriodo(fechaStr){
+  if(!fechaStr) return false;
+  const ahora=new Date();
+  const hoy=new Date(ahora.getFullYear(),ahora.getMonth(),ahora.getDate());
+  const ayer=new Date(hoy); ayer.setDate(hoy.getDate()-1);
+  const lunes=new Date(hoy); lunes.setDate(hoy.getDate()-((hoy.getDay()+6)%7));
+  const primerDiaMes=new Date(ahora.getFullYear(),ahora.getMonth(),1);
+  const p=fechaStr.match(/(\d+)\/(\d+)\/(\d+)/);
+  if(!p) return false;
+  const fd=new Date(p[3],p[2]-1,p[1]);
+  if(histPeriodo==='hoy')    return fd>=hoy;
+  if(histPeriodo==='ayer')   return fd>=ayer&&fd<hoy;
+  if(histPeriodo==='semana') return fd>=lunes;
+  if(histPeriodo==='mes')    return fd>=primerDiaMes;
+  if(histPeriodo==='7dias')  return fd>=new Date(ahora-7*864e5);
+  if(histPeriodo==='30dias') return fd>=new Date(ahora-30*864e5);
+  if(histPeriodo==='90dias') return fd>=new Date(ahora-90*864e5);
+  return true;
+}
+
 function renderHistorial(){
   const el=document.getElementById('view-historial');
   const allPaid=orders.filter(o=>isClosed(o));
@@ -1354,10 +1375,10 @@ function renderHistorial(){
   // stats del período (incluye abonos de créditos)
   const mixtoOrders=paid.filter(o=>o.payMethod==='mixto'&&o.pagos);
   const totalEfectivo=paid.filter(o=>o.status==='paid'&&o.payMethod==='efectivo').reduce((s,o)=>s+totalOf(o),0)
-    + orders.filter(o=>o.status==='credito').flatMap(o=>(o.abonos||[]).filter(a=>a.payMethod==='efectivo')).reduce((s,a)=>s+a.amount,0)
+    + orders.filter(o=>isClosed(o)).flatMap(o=>(Array.isArray(o.abonos)?o.abonos:Object.values(o.abonos||{})).filter(a=>a.payMethod==='efectivo'&&fechaEnPeriodo(a.fecha))).reduce((s,a)=>s+a.amount,0)
     + mixtoOrders.flatMap(o=>o.pagos.filter(p=>p.method==='efectivo')).reduce((s,p)=>s+p.amount,0);
   const totalNequi=paid.filter(o=>o.status==='paid'&&o.payMethod==='nequi').reduce((s,o)=>s+totalOf(o),0)
-    + orders.filter(o=>o.status==='credito').flatMap(o=>(o.abonos||[]).filter(a=>a.payMethod==='nequi')).reduce((s,a)=>s+a.amount,0)
+    + orders.filter(o=>isClosed(o)).flatMap(o=>(Array.isArray(o.abonos)?o.abonos:Object.values(o.abonos||{})).filter(a=>a.payMethod==='nequi'&&fechaEnPeriodo(a.fecha))).reduce((s,a)=>s+a.amount,0)
     + mixtoOrders.flatMap(o=>o.pagos.filter(p=>p.method==='nequi')).reduce((s,p)=>s+p.amount,0);
   const creditOrders=orders.filter(o=>o.status==='credito'||o.status==='mixto-credito');
   const totalAbonado=creditOrders.reduce((s,o)=>s+(o.abonos||[]).reduce((a,ab)=>a+ab.amount,0),0);
@@ -1513,33 +1534,13 @@ function renderHistorial(){
   const method=histSubTab;
   // Pedidos normales pagados en este método
   const filtered=paid.filter(o=>['paid','mixto-credito'].includes(o.status)&&o.payMethod===method);
-  // Abonos de créditos pagados en este método (de TODOS los créditos, filtrados por fecha del abono)
-  const allCreditOrders=orders.filter(o=>o.status==='credito');
+  // Abonos de créditos pagados en este método, filtrados por fecha del abono
+  const allCreditOrders=orders.filter(o=>o.status==='credito'||o.status==='mixto-credito');
   const abonosDelMetodo=[];
   allCreditOrders.forEach(o=>{
-    (o.abonos||[]).forEach(a=>{
-      if(a.payMethod===method){
-        // Filtrar abono por período usando su fecha
-        const partes=a.fecha.match(/(\d+)\/(\d+)\/(\d+),\s*(\d+):(\d+)/);
-        if(partes){
-          const fd=new Date(partes[3],partes[2]-1,partes[1],partes[4],partes[5]);
-          const ahora=new Date();
-          const hoy=new Date(ahora.getFullYear(),ahora.getMonth(),ahora.getDate());
-          const ayer=new Date(hoy); ayer.setDate(hoy.getDate()-1);
-          const lunes=new Date(hoy); lunes.setDate(hoy.getDate()-((hoy.getDay()+6)%7));
-          const primerDiaMes=new Date(ahora.getFullYear(),ahora.getMonth(),1);
-          let incluir=true;
-          if(histPeriodo==='hoy')    incluir=fd>=hoy;
-          else if(histPeriodo==='ayer')   incluir=fd>=ayer&&fd<hoy;
-          else if(histPeriodo==='semana') incluir=fd>=lunes;
-          else if(histPeriodo==='mes')    incluir=fd>=primerDiaMes;
-          else if(histPeriodo==='7dias')  incluir=fd>=new Date(ahora-7*864e5);
-          else if(histPeriodo==='30dias') incluir=fd>=new Date(ahora-30*864e5);
-          else if(histPeriodo==='90dias') incluir=fd>=new Date(ahora-90*864e5);
-          if(incluir) abonosDelMetodo.push({...a, orderId:o.id, isAbono:true});
-        } else {
-          abonosDelMetodo.push({...a, orderId:o.id, isAbono:true});
-        }
+    (Array.isArray(o.abonos)?o.abonos:Object.values(o.abonos||{})).forEach(a=>{
+      if(a.payMethod===method && fechaEnPeriodo(a.fecha)){
+        abonosDelMetodo.push({...a, orderId:o.id, isAbono:true});
       }
     });
   });
@@ -1802,8 +1803,8 @@ function renderEditor(){
   const cat=MENU.find(c=>c.id===activeCat);
   const qty_badge = editing.items.reduce((s,i)=>s+i.qty,0);
   document.getElementById('cats-bar').innerHTML=
-    MENU.map(c=>`<button class="cat-btn" onclick="setCat('${c.id}')" style="background:${activeCat===c.id?'#e74c3c':'#eee'};color:${activeCat===c.id?'#fff':'#555'}">${c.icon} ${c.name}</button>`).join('')
-    + `<button class="cat-btn" onclick="setCat('pedido')" style="background:${activeCat==='pedido'?'#27ae60':'#eee'};color:${activeCat==='pedido'?'#fff':'#555'};position:relative">🛒 Pedido${qty_badge>0?`<span style="position:absolute;top:-5px;right:-5px;background:#e74c3c;color:#fff;border-radius:50%;font-size:.6rem;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-weight:900">${qty_badge}</span>`:''}</button>`;
+    `<button class="cat-btn" onclick="setCat('pedido')" style="background:${activeCat==='pedido'?'#27ae60':'#eee'};color:${activeCat==='pedido'?'#fff':'#555'};position:relative">🛒 Pedido${qty_badge>0?`<span style="position:absolute;top:-5px;right:-5px;background:#e74c3c;color:#fff;border-radius:50%;font-size:.6rem;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-weight:900">${qty_badge}</span>`:''}</button>`
+    + MENU.map(c=>`<button class="cat-btn" onclick="setCat('${c.id}')" style="background:${activeCat===c.id?'#e74c3c':'#eee'};color:${activeCat===c.id?'#fff':'#555'}">${c.icon} ${c.name}</button>`).join('');
   const nb=document.getElementById('cat-note-bar');
 
   // ── PESTAÑA PEDIDO ──────────────────────────────────────────────────────────
@@ -1815,25 +1816,37 @@ function renderEditor(){
       return;
     }
     const subtotal=totalOf(editing);
-    const rowsHTML=items.map(it=>`
-      <div class="order-tab-item">
-        <div class="order-tab-item-info">
-          <div class="order-tab-item-name">${it.name}</div>
-          <div class="order-tab-item-price">${fmt(it.price)} c/u${it.note?` · <span style="color:#e67e00">${it.note}</span>`:''}</div>
+    const rowsHTML=items.map(item=>{
+      const isCustom=item.price!==item.origPrice||(item.ingrPct!=null&&item.ingrPct!==100);
+      const descPct=item.origPrice&&item.origPrice!==item.price?Math.round((1-item.price/item.origPrice)*100):null;
+      return `<div class="sheet-item">
+        <div class="sheet-item-row">
+          <div class="qty-controls">
+            <button class="qty-btn minus" onclick="changeQty(${item.itemId},-1)">−</button>
+            <span class="qty-num">${item.qty}</span>
+            <button class="qty-btn plus"  onclick="changeQty(${item.itemId},1)">+</button>
+          </div>
+          <span class="sheet-item-name">${item.name}</span>
+          <span class="sheet-item-price">${fmt(item.price*item.qty)}</span>
         </div>
-        <div class="order-tab-qty-ctrl">
-          <button class="order-tab-qty-btn" style="background:#fdecea;color:#c0392b" onclick="changeQtyTab(${it.itemId},-1)">−</button>
-          <span class="order-tab-qty-num">${it.qty}</span>
-          <button class="order-tab-qty-btn" style="background:#eafaf1;color:#27ae60" onclick="changeQtyTab(${it.itemId},1)">+</button>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap">
+          <button onclick="openItemCustomModal(${item.itemId})" style="background:${isCustom?'#fff3f3':'#f5f5f5'};border:1.5px solid ${isCustom?'#e74c3c':'#ddd'};border-radius:7px;padding:4px 10px;font-size:.72rem;font-weight:800;cursor:pointer;color:${isCustom?'#e74c3c':'#888'};font-family:'Nunito',sans-serif;">
+            ✏️ ${isCustom?(descPct?`−${descPct}% · ${item.ingrPct}% ingr.`:`Personalizado`):'Descuento / ajuste'}
+          </button>
+          ${editingNoteId===item.itemId
+            ?`<div class="note-edit-row" style="flex:1;min-width:0"><input class="note-input" id="note-input-${item.itemId}" value="${item.note}" placeholder="Ej: sin salsa…" oninput="setNote(${item.itemId},this.value)" onkeydown="if(event.key==='Enter')confirmNoteTab(${item.itemId})"/><button class="note-ok" onclick="confirmNoteTab(${item.itemId})">OK</button></div>`
+            :`<div class="note-trigger" onclick="startNoteTab(${item.itemId})">${item.note?`<span class="note-pill">📝 ${item.note}</span>`:`<span class="note-empty">+ Especificación</span>`}</div>`}
         </div>
-        <div style="font-family:'Bebas Neue';font-size:1.1rem;color:#2980b9;min-width:60px;text-align:right">${fmt(it.price*it.qty)}</div>
-      </div>`).join('');
-    document.getElementById('items-grid').innerHTML=`<div class="order-tab-wrap">${rowsHTML}
+      </div>`;
+    }).join('');
+    document.getElementById('items-grid').innerHTML=`<div class="order-tab-wrap">
+      ${rowsHTML}
       <div class="order-tab-total">
         <span style="font-weight:800;color:#555">Total</span>
         <span style="font-family:'Bebas Neue';font-size:1.5rem;color:#27ae60">${fmt(subtotal)}</span>
       </div>
     </div>`;
+    if(editingNoteId){setTimeout(()=>{const inp=document.getElementById('note-input-'+editingNoteId);if(inp){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length);}},50);}
     return;
   }
 
@@ -1864,6 +1877,8 @@ function changeQtyTab(itemId, delta){
   if(editing.items[idx].qty<=0) editing.items.splice(idx,1);
   renderEditor();
 }
+function startNoteTab(itemId){editingNoteId=itemId;renderEditor();}
+function confirmNoteTab(itemId){editingNoteId=null;renderEditor();}
 
 // Ítems que requieren elegir proteína
 const PROTEINA_OPTS = {
