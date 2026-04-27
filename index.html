@@ -20,6 +20,9 @@
   };
   firebase.initializeApp(firebaseConfig);
   const db   = firebase.database();
+  try { db.goOnline(); } catch(e) {}
+  // Persiste escrituras pendientes en disco → sobreviven a un refresh/cierre
+  try { db.setPersistenceEnabled(true); } catch(e) {}
   db.ref('.info/connected').on('value', snap => {
     const online = snap.val();
     const el = document.getElementById('conn-status');
@@ -1016,6 +1019,14 @@ const REF = {
 };
 Object.values(REF).forEach(r => { try{ r.keepSynced(true); }catch(e){} });
 
+// Alerta si hay escrituras locales al cerrar la página
+window.addEventListener('beforeunload', e => {
+  if(_localDirtyIds.size > 0){
+    e.preventDefault();
+    e.returnValue = '⚠️ Hay cambios sin guardar. ¿Salir de todas formas?';
+  }
+});
+
 // Estado de conexión
 db.ref('.info/connected').on('value', snap => {
   const online = snap.val() === true;
@@ -1026,9 +1037,11 @@ db.ref('.info/connected').on('value', snap => {
 });
 
 // ── SYNC OPTIMISTA ────────────────────────────────────────────────────────────
-// Contador de escrituras pendientes — mientras > 0, el listener no sobreescribe
-let _pendingWrites = 0;
-function _syncBg(fn){ _pendingWrites++; try{ fn(); }catch(e){} setTimeout(()=>{ _pendingWrites=Math.max(0,_pendingWrites-1); },3000); }
+// Set de IDs de pedidos modificados localmente — el listener los respeta
+let _localDirtyIds = new Set();
+function _markDirty(id){ _localDirtyIds.add(String(id)); }
+function _clearDirty(id){ _localDirtyIds.delete(String(id)); }
+function _syncBg(fn){ try{ fn(); }catch(e){ console.warn('syncBg error',e); } }
 
 function saveData(){
   _syncBg(()=>{
@@ -1042,8 +1055,14 @@ function saveData(){
 
 // Guarda UN solo pedido en Firebase (más confiable para operaciones de crédito)
 function saveOrder(o){
-  // Optimista: siempre resuelve inmediatamente; Firebase sincroniza en segundo plano
-  _syncBg(()=>{ REF.orders.child(String(o.id)).set(o); });
+  // Marca el pedido como "modificado localmente" para que el listener no lo sobreescriba
+  _markDirty(o.id);
+  _syncBg(()=>{
+    REF.orders.child(String(o.id)).set(o).then(()=>{
+      // Escritura confirmada por Firebase → ya puede aceptar actualizaciones remotas
+      _clearDirty(o.id);
+    }).catch(e=>{ console.warn('saveOrder bg error', e); });
+  });
   return Promise.resolve();
 }
 
@@ -1065,10 +1084,17 @@ function loadData(){
     if(hayNuevos && _prevSentIds.size > 0) playKitchenSound();
     _prevSentIds = newSentIds;
 
-    // Si hay escrituras locales pendientes, no sobreescribir estado local
-    if(_pendingWrites > 0){ _pendingWrites=Math.max(0,_pendingWrites-1); return; }
-
-    orders = newOrders;
+    // Mezclar: respetar pedidos modificados localmente, aceptar el resto del servidor
+    if(_localDirtyIds.size > 0){
+      // Tomar los pedidos del servidor excepto los que tenemos localmente más frescos
+      const localById = Object.fromEntries(orders.map(o=>[String(o.id),o]));
+      orders = newOrders.map(o => _localDirtyIds.has(String(o.id)) ? localById[String(o.id)] : o);
+      // Agregar los locales que aún no llegaron al servidor (nuevos no sincronizados)
+      orders.filter(o=>_localDirtyIds.has(String(o.id))&&!newOrders.find(n=>String(n.id)===String(o.id)))
+        .forEach(o=>orders.push(o));
+    } else {
+      orders = newOrders;
+    }
     const t = document.querySelector('.tab.active')?.dataset?.tab;
     if(t==='pedidos')   renderPedidos();
     if(t==='kitchen')   renderKitchen();
@@ -1625,9 +1651,10 @@ function toggleHistOrder(id){
   if(el) el.classList.toggle('open');
 }
 function eliminarDelHistorial(id){
-  try{ REF.orders.child(String(id)).remove(); }catch(e){}
+  _markDirty(id);
   orders=orders.filter(x=>String(x.id)!==String(id));
   renderHistorial();
+  _syncBg(()=>{ REF.orders.child(String(id)).remove().then(()=>_clearDirty(id)).catch(e=>console.warn(e)); });
 }
 
 // ── CANCELAR PEDIDO ──────────────────────────────────────────────────────────
@@ -1638,11 +1665,13 @@ function confirmCancelOrder(){
   if(!cancelOrderId)return;
   const o=orders.find(x=>String(x.id)===String(cancelOrderId));
   if(o&&o.tableId) tableStates[o.tableId]={status:'free'};
+  _markDirty(cancelOrderId);
   orders=orders.filter(x=>x.id!==cancelOrderId);
   closeCancelModal();
-  saveData(); renderPedidos(); renderMesas();
+  renderPedidos(); renderMesas();
   updateBadge('pedidos',orders.filter(o=>isActive(o)).length);
   updateBadge('kitchen',orders.filter(o=>o.status==='sent').length);
+  _syncBg(()=>{ REF.orders.child(String(cancelOrderId)).remove().then(()=>_clearDirty(cancelOrderId)).catch(e=>console.warn(e)); REF.tables.set(tableStates); });
 }
 
 // ── ABONOS A CRÉDITO ─────────────────────────────────────────────────────────
