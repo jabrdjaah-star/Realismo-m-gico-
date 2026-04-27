@@ -20,6 +20,11 @@
   };
   firebase.initializeApp(firebaseConfig);
   const db   = firebase.database();
+  db.ref('.info/connected').on('value', snap => {
+    const online = snap.val();
+    const el = document.getElementById('conn-status');
+    if(el){ el.textContent = online ? '● En línea' : '● Sin conexión'; el.style.color = online ? '#2ecc71':'#e74c3c'; }
+  });
   const auth = firebase.auth();
 </script>
 <style>
@@ -1009,6 +1014,7 @@ const REF = {
   gastos:       db.ref('rm/gastos'),
   preciosIngr:  db.ref('rm/preciosIngr'),
 };
+Object.values(REF).forEach(r => { try{ r.keepSynced(true); }catch(e){} });
 
 // Estado de conexión
 db.ref('.info/connected').on('value', snap => {
@@ -1019,29 +1025,26 @@ db.ref('.info/connected').on('value', snap => {
   if(label) label.textContent    = online ? '● En línea' : '● Sin conexión';
 });
 
+// ── SYNC OPTIMISTA ────────────────────────────────────────────────────────────
+// Contador de escrituras pendientes — mientras > 0, el listener no sobreescribe
+let _pendingWrites = 0;
+function _syncBg(fn){ _pendingWrites++; try{ fn(); }catch(e){} setTimeout(()=>{ _pendingWrites=Math.max(0,_pendingWrites-1); },3000); }
+
 function saveData(){
-  try{
+  _syncBg(()=>{
     REF.orders.set(orders.length ? Object.fromEntries(orders.map(o=>[String(o.id),o])) : {});
     REF.counter.set(orderCounter);
     REF.tables.set(tableStates);
     REF.prestamistas.set(prestamistas.length ? Object.fromEntries(prestamistas.map(p=>[String(p.id),p])) : {});
     REF.gastos.set(gastos.length ? Object.fromEntries(gastos.map(g=>[String(g.id),g])) : {});
-  }catch(e){ console.error('saveData error',e); }
+  });
 }
 
 // Guarda UN solo pedido en Firebase (más confiable para operaciones de crédito)
 function saveOrder(o){
-  return new Promise((resolve, reject)=>{
-    REF.orders.child(String(o.id)).set(o, error=>{
-      if(error){
-        console.error('saveOrder error:', error);
-        alert('❌ Error al guardar: ' + error.message);
-        reject(error);
-      } else {
-        resolve();
-      }
-    });
-  });
+  // Optimista: siempre resuelve inmediatamente; Firebase sincroniza en segundo plano
+  _syncBg(()=>{ REF.orders.child(String(o.id)).set(o); });
+  return Promise.resolve();
 }
 
 function savePreciosIngr(){
@@ -1061,6 +1064,9 @@ function loadData(){
     const hayNuevos = [...newSentIds].some(id=>!_prevSentIds.has(id));
     if(hayNuevos && _prevSentIds.size > 0) playKitchenSound();
     _prevSentIds = newSentIds;
+
+    // Si hay escrituras locales pendientes, no sobreescribir estado local
+    if(_pendingWrites > 0){ _pendingWrites=Math.max(0,_pendingWrites-1); return; }
 
     orders = newOrders;
     const t = document.querySelector('.tab.active')?.dataset?.tab;
@@ -1680,7 +1686,8 @@ function confirmAbono(){
   if(!o.abonos) o.abonos=[];
   o.abonos.push({amount, fecha:now(), payMethod:abonoMetodo, deudorName:o.deudorName||'Sin nombre'});
   closeAbonoModal();
-  saveOrder(o).then(()=>{ renderHistorial(); }).catch(()=>{});
+  renderHistorial(); // optimistic — actualiza inmediatamente
+  saveOrder(o).catch(e=>console.error('saveOrder abono error',e));
 }
 function pagarTotalCredito(orderId){
   openAbonoModal(orderId);
@@ -2260,11 +2267,10 @@ function finalizePago(method, deudorName){
   if(method==='credito') o.abonos=[];
   if(o.tableId) tableStates[o.tableId]={status:'free'};
   closeBill();
-  saveOrder(o).then(()=>{
-    REF.tables.set(tableStates);
-    REF.counter.set(orderCounter);
-    renderPedidos(); renderMesas();
-  }).catch(()=>{});
+  // Optimista: renderiza primero, guarda en segundo plano
+  renderPedidos(); renderMesas();
+  saveOrder(o);
+  _syncBg(()=>{ REF.tables.set(tableStates); REF.counter.set(orderCounter); });
 }
 
 // ── PAGO MIXTO ────────────────────────────────────────────────────────────────
@@ -2278,7 +2284,10 @@ function finalizePagoMixto(met1, monto1, met2, monto2, deudorName){
   if(deudorName){ o.deudorName=deudorName; o.abonos=[]; }
   if(o.tableId) tableStates[o.tableId]={status:'free'};
   closeBill();
-  saveOrder(o).then(()=>{ REF.tables.set(tableStates); REF.counter.set(orderCounter); renderPedidos(); renderMesas(); }).catch(()=>{});
+  // Optimista: renderiza primero, guarda en segundo plano
+  renderPedidos(); renderMesas();
+  saveOrder(o);
+  _syncBg(()=>{ REF.tables.set(tableStates); REF.counter.set(orderCounter); });
 }
 
 // ── COSTOS: INGREDIENTES Y PRECIOS ───────────────────────────────────────────
