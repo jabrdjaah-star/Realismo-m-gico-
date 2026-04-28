@@ -32,17 +32,17 @@
 </script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:none;min-height:100vh;overflow-x:hidden;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#1a3a5c 0%,#1e5799 50%,#2980b9 100%);background-attachment:fixed;color:#222;user-select:none;min-height:100vh;overflow-x:hidden;}
 ::-webkit-scrollbar{width:3px;height:3px;}
 ::-webkit-scrollbar-thumb{background:#ddd;border-radius:2px;}
 
-#app-header{background:#2980b9;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+#app-header{background:linear-gradient(135deg,#2471a3,#5dade2);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
 .avatar{width:36px;height:36px;border-radius:50%;background:#c0392b;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1rem;}
 .header-title{color:#fff;font-weight:700;font-size:1.1rem;margin-left:10px;}
 
-#tabs{display:flex;background:#fff;border-bottom:2px solid #eee;overflow-x:auto;position:sticky;top:57px;z-index:49;}
-.tab{flex:1;text-align:center;padding:10px 4px;font-size:.68rem;font-weight:800;color:#aaa;cursor:pointer;letter-spacing:.5px;position:relative;white-space:nowrap;border-bottom:3px solid transparent;transition:all .15s;min-width:60px;}
-.tab.active{color:#2980b9;border-bottom-color:#2980b9;}
+#tabs{display:flex;background:#1a3a5c;overflow-x:auto;position:sticky;top:57px;z-index:49;gap:3px;padding:4px 6px;}
+.tab{flex:0 0 auto;display:flex;align-items:center;justify-content:center;text-align:center;padding:5px 10px;font-size:.62rem;font-weight:800;color:rgba(255,255,255,.65);cursor:pointer;letter-spacing:.4px;position:relative;white-space:nowrap;border-radius:7px;border:none;transition:all .15s;background:transparent;}
+.tab.active{color:#1a3a5c;background:#e8f4fd;border-radius:7px;}
 .tab-badge{position:absolute;top:3px;right:5px;background:#e74c3c;color:#fff;border-radius:50%;width:15px;height:15px;font-size:.58rem;display:flex;align-items:center;justify-content:center;font-weight:800;}
 
 #content{min-height:calc(100vh - 110px);}
@@ -54,7 +54,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 
 /* tarjetas pedido */
 .pedidos-list{padding:10px 12px;display:flex;flex-direction:column;gap:10px;}
-.order-card{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07);}
+.order-card{background:linear-gradient(135deg,#1e3a5c,#2c6e9e);border-radius:10px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.2);}
 .order-card-top{display:flex;align-items:flex-start;padding:12px 14px 6px;cursor:pointer;}
 .order-card-title{font-weight:800;font-size:1rem;color:#222;}
 .order-card-sub{font-size:.72rem;color:#aaa;margin-top:1px;}
@@ -88,28 +88,28 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 .hist-tabs{display:flex;gap:8px;margin-bottom:14px;}
 .hist-tab-btn{flex:1;border:none;border-radius:8px;padding:9px;font-weight:800;font-size:.82rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s;}
 .hist-tab-btn:active{transform:scale(.95);}
-.hist-order{background:#fff;border-radius:10px;margin-bottom:8px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.06);}
+.hist-order{border-radius:10px;margin-bottom:8px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.12);}
 .hist-order-header{padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f5f5f5;cursor:pointer;}
-.hist-order-num{font-weight:800;font-size:.9rem;color:#222;}
-.hist-order-meta{font-size:.7rem;color:#aaa;}
+.hist-order-num{font-weight:800;font-size:.9rem;color:#fff;}
+.hist-order-meta{font-size:.7rem;color:rgba(255,255,255,.7);}
 .hist-order-total{font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:1px;}
 .pay-badge{border-radius:6px;padding:2px 8px;font-size:.65rem;font-weight:800;letter-spacing:.5px;}
-.hist-order-body{padding:10px 14px;display:none;}
+.hist-order-body{padding:10px 14px;display:none;background:rgba(255,255,255,.12);}
 .hist-order-body.open{display:block;}
-.hist-item-row{display:flex;justify-content:space-between;font-size:.84rem;color:#444;padding:3px 0;border-bottom:1px solid #f9f9f9;}
+.hist-item-row{display:flex;justify-content:space-between;font-size:.84rem;color:rgba(255,255,255,.85);padding:3px 0;border-bottom:1px solid rgba(255,255,255,.12);}
 /* resumen */
-.resumen-item{background:#fff;border-radius:8px;margin-bottom:6px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,.05);}
-.resumen-item-name{font-weight:700;font-size:.88rem;color:#222;}
-.resumen-item-cat{font-size:.68rem;color:#aaa;margin-top:1px;}
-.resumen-qty{font-family:'Bebas Neue';font-size:1.4rem;color:#2980b9;letter-spacing:1px;margin-right:8px;}
+.resumen-item{background:linear-gradient(135deg,#1a3a5c,#2c6e9e);border-radius:8px;margin-bottom:6px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 3px 10px rgba(41,128,185,.3);}
+.resumen-item-name{font-weight:700;font-size:.88rem;color:#fff;}
+.resumen-item-cat{font-size:.68rem;color:rgba(255,255,255,.65);margin-top:1px;}
+.resumen-qty{font-family:'Bebas Neue';font-size:1.4rem;color:#fff;letter-spacing:1px;margin-right:8px;}
 .resumen-total{font-size:.78rem;color:#27ae60;font-weight:700;}
 .stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
-.stat-box{background:#fff;border-radius:10px;padding:12px;text-align:center;box-shadow:0 1px 6px rgba(0,0,0,.06);}
-.stat-num{font-family:'Bebas Neue';font-size:1.8rem;letter-spacing:1px;}
-.stat-lbl{font-size:.68rem;color:#aaa;text-transform:uppercase;letter-spacing:.8px;margin-top:2px;}
+.stat-box{background:linear-gradient(135deg,#1a3a5c,#2980b9);border-radius:10px;padding:12px;text-align:center;box-shadow:0 4px 14px rgba(41,128,185,.3);}
+.stat-num{font-family:'Bebas Neue';font-size:1.8rem;letter-spacing:1px;color:#fff;}
+.stat-lbl{font-size:.68rem;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.8px;margin-top:2px;}
 
 /* ── EDITOR ── */
-#editor{display:none;position:fixed;inset:0;background:#fff;z-index:200;flex-direction:column;overflow:hidden;}
+#editor{display:none;position:fixed;inset:0;background:linear-gradient(160deg,#1a3a5c,#1e5799);z-index:200;flex-direction:column;overflow:hidden;}
 #editor.open{display:flex;}
 .editor-header{background:#2980b9;padding:10px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .editor-header-info{flex:1;}
@@ -120,10 +120,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 .mesa-num-btn{border-radius:8px;padding:5px 10px;font-weight:800;cursor:pointer;font-size:.88rem;font-family:'Nunito',sans-serif;}
 .mesa-num-btn:active{transform:scale(.9);}
 .cats-bar{display:flex;gap:5px;padding:7px 8px;overflow-x:auto;background:#f8f8f8;border-bottom:1px solid #eee;flex-shrink:0;}
-.cat-btn{border:none;border-radius:20px;padding:5px 11px;font-weight:700;font-size:.72rem;cursor:pointer;white-space:nowrap;font-family:'Nunito',sans-serif;}
+.cat-btn{border:3px solid transparent;border-radius:20px;padding:5px 11px;font-weight:700;font-size:.72rem;cursor:pointer;white-space:nowrap;font-family:'Nunito',sans-serif;transition:all .15s;}
 .cat-btn:active{transform:scale(.93);}
 .order-tab-wrap{padding:4px 0 12px;}
-.order-tab-item{display:flex;align-items:center;gap:10px;background:#fff;border-radius:10px;padding:10px 12px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.07);}
+.order-tab-item{display:flex;align-items:center;gap:10px;background:linear-gradient(160deg,#1a3a5c,#2471a3);border-radius:10px;padding:10px 12px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.07);}
 .order-tab-item-info{flex:1;}
 .order-tab-item-name{font-weight:800;font-size:.85rem;color:#222;}
 .order-tab-item-price{font-size:.75rem;color:#888;}
@@ -131,6 +131,26 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 .order-tab-qty-btn{width:28px;height:28px;border-radius:50%;border:none;font-size:1rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;}
 .order-tab-qty-num{font-weight:900;font-size:.95rem;min-width:18px;text-align:center;}
 .order-tab-total{background:#f8f9ff;border-radius:10px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;margin-top:4px;border-top:2px solid #eee;}
+/* ── FINANZAS ─────────────────────────────────────────────────────────────── */
+.fin-wrap{padding:12px;}
+.fin-periodo{background:linear-gradient(135deg,#e8f4fd,#f0f8ff);border-radius:12px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:8px;box-shadow:0 2px 8px rgba(41,128,185,.12);}
+.fin-periodo select{flex:1;border:none;font-family:'Nunito',sans-serif;font-weight:800;font-size:.9rem;color:#333;background:transparent;outline:none;}
+.fin-card{border-radius:14px;padding:16px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,.1);}
+.fin-card-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.fin-card-icon{font-size:1.4rem;}
+.fin-card-title{font-weight:900;font-size:.9rem;color:rgba(255,255,255,.85);letter-spacing:.3px;}
+.fin-main-num{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:1px;line-height:1;}
+.fin-sub{font-size:.72rem;color:#aaa;margin-top:3px;}
+.fin-breakdown{margin-top:10px;border-top:1px solid #f0f0f0;padding-top:10px;display:flex;flex-direction:column;gap:5px;}
+.fin-row{display:flex;justify-content:space-between;font-size:.78rem;color:rgba(255,255,255,.75);}
+.fin-row span:last-child{font-weight:800;}
+.fin-balance{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;border-radius:14px;padding:18px;margin-bottom:10px;box-shadow:0 4px 15px rgba(0,0,0,.2);}
+.fin-balance-title{font-size:.78rem;font-weight:800;color:#aaa;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+.fin-balance-num{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;letter-spacing:2px;}
+.fin-deudor-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f5f5f5;}
+.fin-deudor-row:last-child{border-bottom:none;}
+.fin-deudor-name{font-weight:800;font-size:.83rem;color:rgba(255,255,255,.9);}
+.fin-deudor-must{font-size:.72rem;color:rgba(255,200,200,.9);font-weight:700;}
 .cat-note-bar{padding:4px 12px;background:#fff9e6;font-size:.68rem;color:#e67e00;font-weight:700;border-bottom:1px solid #f5e6c0;flex-shrink:0;display:none;}
 .items-grid{flex:1;overflow-y:auto;padding:8px 10px 80px;display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:7px;align-content:start;}
 .item-tile{background:#fafafa;border:1.5px solid #eee;border-radius:10px;padding:10px 8px;cursor:pointer;text-align:center;position:relative;transition:all .15s;}
@@ -149,7 +169,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 
 /* ── BOTTOM SHEET carrito ── */
 #overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:300;}
-#cart-sheet{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:18px 18px 0 0;z-index:310;max-height:82vh;display:flex;flex-direction:column;overflow:hidden;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1);}
+#cart-sheet{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(180deg,#1a3a5c,#1e5799);border-radius:18px 18px 0 0;z-index:310;max-height:82vh;display:flex;flex-direction:column;overflow:hidden;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1);}
 #cart-sheet.open{transform:translateY(0);}
 .sheet-handle{width:40px;height:4px;background:#ddd;border-radius:2px;margin:10px auto 8px;}
 .sheet-title-row{padding:0 16px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;}
@@ -172,7 +192,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 .note-edit-row{margin-top:7px;display:flex;gap:6px;align-items:center;}
 .note-input{flex:1;border:1.5px solid #e74c3c;border-radius:8px;padding:7px 10px;font-size:.8rem;outline:none;color:#333;background:#fff9f9;font-family:'Nunito',sans-serif;}
 .note-ok{background:#e74c3c;border:none;border-radius:8px;padding:7px 10px;color:#fff;font-weight:800;font-size:.78rem;cursor:pointer;font-family:'Nunito',sans-serif;}
-.sheet-footer{padding:12px 16px;border-top:1px solid #f0f0f0;background:#fff;flex-shrink:0;}
+.sheet-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,.15);background:linear-gradient(135deg,#1a3a5c,#1e5799);flex-shrink:0;}
 .sheet-total-row{display:flex;justify-content:space-between;margin-bottom:12px;}
 .sheet-total-label{font-size:.85rem;color:#888;}
 .sheet-total-val{font-family:'Bebas Neue';font-size:1.3rem;color:#333;letter-spacing:1px;}
@@ -184,7 +204,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 /* ── COCINA ── */
 .kitchen-wrap{padding:12px;}
 .kitchen-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:16px;}
-.kitchen-card{background:#fff;border:2px solid #e74c3c;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(231,76,60,.12);}
+.kitchen-card{background:linear-gradient(135deg,#1e3a5c,#2c5f8a);border:2px solid rgba(231,76,60,.6);border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(231,76,60,.12);}
 .kitchen-card.ready{border-color:#f39c12;background:#fffbea;opacity:.8;}
 .kitchen-card-header{background:#e74c3c;padding:8px 12px;display:flex;justify-content:space-between;}
 .kitchen-card.ready .kitchen-card-header{background:#fef3cd;}
@@ -204,7 +224,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 #bill-screen{display:none;position:fixed;inset:0;background:#f5f5f5;z-index:200;overflow-y:auto;}
 #bill-screen.open{display:block;}
 .bill-header{background:#e74c3c;padding:12px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10;}
-.bill-card{max-width:420px;margin:16px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.08);}
+.bill-card{max-width:420px;margin:16px auto;background:linear-gradient(160deg,#1e3a5c,#2c5f8a);border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.08);}
 .bill-top{background:#e74c3c;padding:14px;text-align:center;}
 .bill-name{font-family:'Bebas Neue';font-size:1.4rem;letter-spacing:3px;color:#fff;}
 .bill-sub-text{font-size:.72rem;color:rgba(255,255,255,.8);letter-spacing:1px;}
@@ -223,7 +243,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 /* ── MÉTODOS DE PAGO ── */
 .pay-methods{padding:14px;}
 .pay-methods-title{font-weight:800;font-size:.9rem;color:#555;margin-bottom:10px;letter-spacing:.5px;text-transform:uppercase;}
-.pay-method-btn{width:100%;border:2px solid #eee;border-radius:10px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;cursor:pointer;background:#fff;font-family:'Nunito',sans-serif;transition:all .18s;}
+.pay-method-btn{width:100%;border:2px solid rgba(255,255,255,.2);border-radius:10px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;cursor:pointer;background:rgba(255,255,255,.1);font-family:'Nunito',sans-serif;transition:all .18s;}
 .pay-method-btn:active{transform:scale(.97);}
 .pay-method-btn.selected{border-color:#2980b9;background:#f0f7ff;}
 .pay-method-icon{font-size:1.6rem;flex-shrink:0;}
@@ -237,7 +257,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 .mixto-panel.open{display:block;}
 .mixto-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
 .mixto-row:last-child{margin-bottom:0;}
-.mixto-met-btn{flex:1;border:2px solid #ddd;border-radius:8px;padding:8px 4px;font-weight:800;font-size:.78rem;cursor:pointer;font-family:'Nunito',sans-serif;background:#fff;color:#555;}
+.mixto-met-btn{flex:1;border:2px solid rgba(255,255,255,.25);border-radius:8px;padding:8px 4px;font-weight:800;font-size:.78rem;cursor:pointer;font-family:'Nunito',sans-serif;background:rgba(255,255,255,.12);color:#fff;}
 .mixto-met-btn.sel{border-color:#2980b9;background:#e8f4fd;color:#2980b9;}
 .mixto-amount{flex:1.2;border:1.5px solid #ddd;border-radius:8px;padding:9px 10px;font-size:.9rem;font-family:'Nunito',sans-serif;outline:none;color:#333;}
 .mixto-amount:focus{border-color:#2980b9;}
@@ -257,11 +277,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 
 /* ── HISTORIAL SUB-TABS ── */
 .hist-subtabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;}
-.hist-subtab-btn{flex:1;border:none;border-radius:8px;padding:9px 6px;font-weight:800;font-size:.75rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s;white-space:nowrap;min-width:80px;}
+.hist-subtab-btn{flex:1;border:3px solid transparent;border-radius:8px;padding:9px 6px;font-weight:800;font-size:.75rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s;white-space:nowrap;min-width:80px;}
 .hist-subtab-btn:active{transform:scale(.95);}
 
 /* ── CRÉDITOS ── */
-.credito-card{background:#fff;border-radius:10px;margin-bottom:10px;overflow:hidden;box-shadow:0 2px 8px rgba(142,68,173,.1);border-left:4px solid #8e44ad;}
+.credito-card{background:#fff;border-radius:10px;margin-bottom:10px;overflow:hidden;box-shadow:0 2px 8px rgba(192,57,43,.15);border-left:4px solid #e74c3c;}
 .credito-header{padding:12px 14px 8px;cursor:pointer;}
 .credito-deudor{font-weight:800;font-size:1rem;color:#222;}
 .credito-meta{font-size:.7rem;color:#aaa;margin-top:1px;}
@@ -279,7 +299,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 /* ── MODAL CRÉDITO / ABONO ── */
 #credito-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;}
 #credito-modal.open{display:flex;}
-.credito-modal-box{background:#fff;border-radius:16px;padding:22px 20px;width:90%;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.18);}
+.credito-modal-box{background:linear-gradient(160deg,#1a3a5c,#2471a3);border-radius:16px;padding:22px 20px;width:90%;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.18);}
 .credito-modal-title{font-weight:800;font-size:1.1rem;color:#222;margin-bottom:16px;}
 .credito-input{width:100%;border:1.5px solid #ddd;border-radius:9px;padding:10px 12px;font-size:.9rem;font-family:'Nunito',sans-serif;outline:none;margin-bottom:10px;color:#333;}
 .credito-input:focus{border-color:#8e44ad;}
@@ -299,7 +319,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 /* ── CONFIRM CANCEL MODAL ── */
 #cancel-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;}
 #cancel-modal.open{display:flex;}
-.cancel-modal-box{background:#fff;border-radius:16px;padding:22px 20px;width:88%;max-width:340px;text-align:center;}
+.cancel-modal-box{background:linear-gradient(160deg,#1a3a5c,#2471a3);border-radius:16px;padding:22px 20px;width:88%;max-width:340px;text-align:center;}
 .cancel-modal-icon{font-size:2.5rem;margin-bottom:10px;}
 .cancel-modal-title{font-weight:800;font-size:1rem;color:#222;margin-bottom:6px;}
 .cancel-modal-sub{font-size:.82rem;color:#aaa;margin-bottom:18px;}
@@ -310,21 +330,26 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 
 /* ── COSTOS ── */
 .costos-wrap{padding:12px;}
-.costos-periodo-tabs{display:flex;gap:6px;margin-bottom:14px;}
-.costos-periodo-btn{flex:1;border:none;border-radius:8px;padding:9px 4px;font-weight:800;font-size:.72rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s;}
+.costos-periodo-tabs{display:flex;gap:5px;margin-bottom:6px;overflow-x:auto;scrollbar-width:none;padding:10px 0 6px;}
+.period-bar{display:flex;gap:5px;padding:10px 0 6px;overflow-x:auto;scrollbar-width:none;margin-bottom:4px;}
+.period-bar::-webkit-scrollbar{display:none;}
+.period-pill{flex:0 0 auto;padding:6px 14px;border-radius:20px;border:3px solid transparent;font-family:'Nunito',sans-serif;font-weight:800;font-size:.72rem;cursor:pointer;transition:all .15s;letter-spacing:.3px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.65);}
+.period-pill:active{transform:scale(.94);}
+.period-pill.active{background:rgba(255,255,255,.22);color:#fff;border:3px solid rgba(255,255,255,.5);box-shadow:0 2px 8px rgba(0,0,0,.2);font-weight:900;}
+.costos-periodo-btn{flex:0 0 auto;border:none;border-radius:20px;padding:6px 14px;font-weight:800;font-size:.72rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s;background:rgba(255,255,255,.18);color:rgba(255,255,255,.75);letter-spacing:.3px;}
 .costos-periodo-btn:active{transform:scale(.95);}
 .costo-stat-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
-.costo-stat-box{background:#fff;border-radius:10px;padding:12px;text-align:center;box-shadow:0 1px 6px rgba(0,0,0,.06);}
-.costo-stat-num{font-family:'Bebas Neue';font-size:1.6rem;letter-spacing:1px;}
-.costo-stat-lbl{font-size:.65rem;color:#aaa;text-transform:uppercase;letter-spacing:.8px;margin-top:2px;}
-.ingr-costo-card{background:#fff;border-radius:10px;margin-bottom:8px;padding:12px 14px;box-shadow:0 1px 5px rgba(0,0,0,.06);}
+.costo-stat-box{background:linear-gradient(135deg,#1a3a5c,#2980b9);border-radius:10px;padding:12px;text-align:center;box-shadow:0 4px 14px rgba(41,128,185,.3);}
+.costo-stat-num{font-family:'Bebas Neue';font-size:1.6rem;letter-spacing:1px;color:#fff;}
+.costo-stat-lbl{font-size:.65rem;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.8px;margin-top:2px;}
+.ingr-costo-card{background:linear-gradient(135deg,#1e3a5c,#2c5f8a);border-radius:10px;margin-bottom:8px;padding:12px 14px;box-shadow:0 2px 8px rgba(0,0,0,.2);}
 .ingr-costo-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
 .ingr-costo-name{font-weight:800;font-size:.88rem;color:#222;}
 .ingr-costo-total{font-family:'Bebas Neue';font-size:1.1rem;color:#e74c3c;letter-spacing:1px;}
 .ingr-costo-bar-wrap{background:#f0f0f0;border-radius:4px;height:5px;overflow:hidden;}
 .ingr-costo-bar{height:5px;border-radius:4px;background:linear-gradient(90deg,#e74c3c,#e67e22);transition:width .4s;}
 .ingr-costo-sub{display:flex;justify-content:space-between;margin-top:5px;font-size:.7rem;color:#aaa;}
-.plato-costo-row{background:#fff;border-radius:10px;margin-bottom:6px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.plato-costo-row{background:linear-gradient(135deg,#1e3a5c,#2c5f8a);border-radius:10px;margin-bottom:6px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,.05);}
 .plato-costo-name{font-weight:700;font-size:.86rem;color:#222;}
 .plato-costo-meta{font-size:.68rem;color:#aaa;margin-top:2px;}
 .plato-costo-val{font-family:'Bebas Neue';font-size:1rem;color:#e74c3c;letter-spacing:1px;}
@@ -337,6 +362,27 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 .costos-subtab-bar{display:flex;gap:6px;margin-bottom:12px;}
 .costos-subtab-btn{flex:1;border:none;border-radius:8px;padding:8px 4px;font-weight:800;font-size:.72rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s;}
 .costos-subtab-btn:active{transform:scale(.95);}
+/* ── FINANZAS ─────────────────────────────────────────────────── */
+.fin-wrap{padding:4px 0 80px;}
+.fin-period-bar{display:flex;gap:6px;overflow-x:auto;padding:4px 0 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.fin-period-bar::-webkit-scrollbar{display:none;}
+.fin-period-btn{flex-shrink:0;padding:6px 14px;border-radius:20px;border:none;font-weight:800;font-size:.75rem;cursor:pointer;font-family:'Nunito',sans-serif;background:#eee;color:#555;transition:all .15s;}
+.fin-period-btn.active{background:#2980b9;color:#fff;}
+.fin-section{margin-bottom:18px;}
+.fin-section-title{font-size:.72rem;font-weight:900;color:#aaa;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;padding-left:2px;}
+.fin-card{border-radius:14px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.1);margin-bottom:10px;}
+.fin-card-row{display:flex;justify-content:space-between;align-items:center;}
+.fin-card-label{font-weight:800;font-size:.85rem;color:rgba(255,255,255,.85);display:flex;align-items:center;gap:6px;}
+.fin-card-val{font-family:'Bebas Neue';font-size:1.6rem;letter-spacing:1px;}
+.fin-card-sub{font-size:.72rem;color:rgba(255,255,255,.6);margin-top:2px;}
+.fin-card-sub span{font-weight:800;}
+.fin-balance{background:linear-gradient(135deg,#1a3a5c,#2980b9);border-radius:14px;padding:18px 16px;box-shadow:0 4px 14px rgba(41,128,185,.3);}
+.fin-balance-label{color:rgba(255,255,255,.75);font-weight:800;font-size:.8rem;letter-spacing:1px;text-transform:uppercase;}
+.fin-balance-val{font-family:'Bebas Neue';font-size:2.4rem;letter-spacing:2px;color:#fff;margin-top:4px;}
+.fin-deudor-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f5f5f5;}
+.fin-deudor-row:last-child{border-bottom:none;}
+.fin-deudor-name{font-weight:800;font-size:.82rem;color:rgba(255,255,255,.9);}
+.fin-deudor-amt{font-family:'Bebas Neue';font-size:1.1rem;color:#e74c3c;}
 .save-precios-btn{width:100%;background:#e74c3c;border:none;border-radius:9px;padding:12px;color:#fff;font-weight:800;font-size:.9rem;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:10px;}
 .save-precios-btn:active{transform:scale(.97);}
 .notif-costos{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#27ae60;color:#fff;padding:10px 22px;border-radius:20px;font-weight:800;font-size:.85rem;z-index:600;opacity:0;transition:opacity .3s;pointer-events:none;}
@@ -345,10 +391,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 /* ── PRÉSTAMISTAS ── */
 .prest-wrap{padding:12px;}
 .prest-summary-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
-.prest-stat-box{background:#fff;border-radius:10px;padding:12px;text-align:center;box-shadow:0 1px 6px rgba(0,0,0,.07);}
-.prest-stat-num{font-family:'Bebas Neue';font-size:1.6rem;letter-spacing:1px;}
-.prest-stat-lbl{font-size:.65rem;color:#aaa;text-transform:uppercase;letter-spacing:.8px;margin-top:2px;}
-.prest-card{background:#fff;border-radius:10px;margin-bottom:10px;overflow:hidden;box-shadow:0 2px 8px rgba(231,76,60,.1);border-left:4px solid #e74c3c;}
+.prest-stat-box{background:linear-gradient(135deg,#1a3a5c,#2980b9);border-radius:10px;padding:12px;text-align:center;box-shadow:0 4px 14px rgba(41,128,185,.3);}
+.prest-stat-num{font-family:'Bebas Neue';font-size:1.6rem;letter-spacing:1px;color:#fff;}
+.prest-stat-lbl{font-size:.65rem;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.8px;margin-top:2px;}
+.prest-card{background:linear-gradient(135deg,#1e3a5c,#2c5f8a);border-radius:10px;margin-bottom:10px;overflow:hidden;box-shadow:0 2px 8px rgba(231,76,60,.1);border-left:4px solid #e74c3c;}
 .prest-card.saldado{border-left-color:#27ae60;opacity:.7;}
 .prest-header{padding:12px 14px 8px;cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;}
 .prest-nombre{font-weight:800;font-size:1rem;color:#222;}
@@ -375,7 +421,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 /* ── MODAL PRÉSTAMISTA ── */
 #prest-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;}
 #prest-modal.open{display:flex;}
-.prest-modal-box{background:#fff;border-radius:16px;padding:22px 20px;width:90%;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.18);}
+.prest-modal-box{background:linear-gradient(160deg,#1a3a5c,#2471a3);border-radius:16px;padding:22px 20px;width:90%;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.18);}
 .prest-modal-title{font-weight:800;font-size:1.1rem;color:#222;margin-bottom:16px;}
 .prest-input{width:100%;border:1.5px solid #ddd;border-radius:9px;padding:10px 12px;font-size:.9rem;font-family:'Nunito',sans-serif;outline:none;margin-bottom:10px;color:#333;}
 .prest-input:focus{border-color:#e74c3c;}
@@ -390,7 +436,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 #login-screen.show{display:flex;}
 .login-logo{font-family:'Bebas Neue';font-size:2.8rem;letter-spacing:4px;color:#fff;text-align:center;line-height:1;margin-bottom:4px;}
 .login-sub{font-size:.78rem;color:rgba(255,255,255,.65);letter-spacing:2px;text-transform:uppercase;text-align:center;margin-bottom:36px;}
-.login-card{background:#fff;border-radius:18px;padding:28px 24px;width:100%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.login-card{background:linear-gradient(160deg,#1a3a5c,#2471a3);border-radius:18px;padding:28px 24px;width:100%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,.25);}
 .login-field-label{font-size:.7rem;font-weight:800;color:#aaa;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px;}
 .login-input{width:100%;border:1.5px solid #e0e0e0;border-radius:10px;padding:12px 14px;font-size:.95rem;font-family:'Nunito',sans-serif;outline:none;color:#222;margin-bottom:16px;background:#fafafa;transition:border-color .2s;-webkit-tap-highlight-color:transparent;}
 .login-input:focus{border-color:#2980b9;background:#fff;}
@@ -403,7 +449,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 /* ── MODAL PERSONALIZACIÓN ÍTEM ── */
 #item-custom-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:flex-end;justify-content:center;}
 #item-custom-modal.open{display:flex;}
-.item-custom-box{background:#fff;border-radius:18px 18px 0 0;padding:20px 18px 28px;width:100%;max-width:480px;box-shadow:0 -8px 32px rgba(0,0,0,.15);}
+.item-custom-box{background:linear-gradient(160deg,#1a3a5c,#1e5799);border-radius:18px 18px 0 0;padding:20px 18px 28px;width:100%;max-width:480px;box-shadow:0 -8px 32px rgba(0,0,0,.15);}
 .item-custom-handle{width:36px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 16px;}
 .item-custom-name{font-weight:800;font-size:1.05rem;color:#222;margin-bottom:2px;}
 .item-custom-orig{font-size:.75rem;color:#aaa;margin-bottom:14px;}
@@ -428,12 +474,12 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 /* ── GASTOS ── */
 .gastos-wrap{padding:12px;}
 .gastos-summary-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
-.gastos-stat-box{background:#fff;border-radius:10px;padding:10px 8px;text-align:center;box-shadow:0 1px 6px rgba(0,0,0,.07);}
-.gastos-stat-num{font-family:'Bebas Neue';font-size:1.4rem;letter-spacing:1px;}
-.gastos-stat-lbl{font-size:.6rem;color:#aaa;text-transform:uppercase;letter-spacing:.7px;margin-top:2px;}
-.gasto-card{background:#fff;border-radius:10px;margin-bottom:8px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 6px rgba(0,0,0,.06);border-left:4px solid #e67e22;}
+.gastos-stat-box{background:linear-gradient(135deg,#1a3a5c,#2980b9);border-radius:10px;padding:10px 8px;text-align:center;box-shadow:0 4px 14px rgba(41,128,185,.3);}
+.gastos-stat-num{font-family:'Bebas Neue';font-size:1.4rem;letter-spacing:1px;color:#fff;}
+.gastos-stat-lbl{font-size:.6rem;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.7px;margin-top:2px;}
+.gasto-card{border-radius:10px;margin-bottom:8px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 3px 10px rgba(0,0,0,.12);}
 .gasto-info{flex:1;}
-.gasto-concepto{font-weight:800;font-size:.92rem;color:#222;}
+.gasto-concepto{font-weight:800;font-size:.92rem;color:#fff;}
 .gasto-meta{font-size:.7rem;color:#aaa;margin-top:2px;}
 .gasto-metodo{font-size:.72rem;font-weight:700;border-radius:5px;padding:2px 7px;margin-top:4px;display:inline-block;}
 .gasto-right{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
@@ -448,7 +494,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 /* ── MODAL GASTO ── */
 #gasto-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;}
 #gasto-modal.open{display:flex;}
-.gasto-modal-box{background:#fff;border-radius:16px;padding:22px 20px;width:90%;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.18);}
+.gasto-modal-box{background:linear-gradient(160deg,#1a3a5c,#2471a3);border-radius:16px;padding:22px 20px;width:90%;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.18);}
 .gasto-modal-title{font-weight:800;font-size:1.1rem;color:#222;margin-bottom:16px;}
 .gasto-input{width:100%;border:1.5px solid #ddd;border-radius:9px;padding:10px 12px;font-size:.9rem;font-family:'Nunito',sans-serif;outline:none;margin-bottom:10px;color:#333;}
 .gasto-input:focus{border-color:#e67e22;}
@@ -473,17 +519,17 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 .order-card.alerta{border-left:4px solid #f39c12;}
 
 /* ── CRÉDITOS AGRUPADOS ── */
-.credito-grupo-card{background:#fff;border-radius:12px;margin-bottom:12px;overflow:hidden;box-shadow:0 2px 10px rgba(142,68,173,.12);border-left:4px solid #8e44ad;}
+.credito-grupo-card{background:linear-gradient(135deg,#5c1a1a,#c0392b);border-radius:12px;margin-bottom:12px;overflow:hidden;box-shadow:0 4px 14px rgba(192,57,43,.3);}
 .credito-grupo-header{padding:12px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;}
-.credito-grupo-nombre{font-weight:800;font-size:1rem;color:#222;}
-.credito-grupo-meta{font-size:.7rem;color:#aaa;margin-top:2px;}
+.credito-grupo-nombre{font-weight:800;font-size:1rem;color:#fff;}
+.credito-grupo-meta{font-size:.7rem;color:rgba(255,255,255,.7);margin-top:2px;}
 .credito-grupo-stats{text-align:right;}
-.credito-grupo-total{font-family:'Bebas Neue';font-size:1.3rem;color:#8e44ad;letter-spacing:1px;}
-.credito-grupo-saldo{font-size:.72rem;font-weight:700;color:#e74c3c;}
+.credito-grupo-total{font-family:'Bebas Neue';font-size:1.3rem;color:#fff;letter-spacing:1px;}
+.credito-grupo-saldo{font-size:.72rem;font-weight:700;color:rgba(255,180,180,.9);}
 .credito-grupo-body{padding:0 14px 14px;display:none;}
 .credito-grupo-body.open{display:block;}
-.credito-grupo-pedido{background:#faf7ff;border-radius:8px;padding:10px 12px;margin-bottom:8px;border-left:3px solid #c39bd3;}
-.adicion-box{background:#fff;border-radius:18px 18px 0 0;padding:20px 18px 28px;width:100%;max-width:480px;box-shadow:0 -8px 32px rgba(0,0,0,.15);}
+.credito-grupo-pedido{background:rgba(255,255,255,.12);border-radius:8px;padding:10px 12px;margin-bottom:8px;border-left:3px solid rgba(255,255,255,.4);}
+.adicion-box{background:linear-gradient(160deg,#1a3a5c,#1e5799);border-radius:18px 18px 0 0;padding:20px 18px 28px;width:100%;max-width:480px;box-shadow:0 -8px 32px rgba(0,0,0,.15);}
 .adicion-handle{width:36px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 16px;}
 .adicion-title{font-weight:800;font-size:1.05rem;color:#222;margin-bottom:14px;}
 .adicion-lbl{font-size:.68rem;font-weight:800;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;}
@@ -501,7 +547,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
 /* ── MODAL PROTEÍNA ── */
 #proteina-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;align-items:center;justify-content:center;padding:20px;}
 #proteina-modal.open{display:flex;}
-.proteina-box{background:#fff;border-radius:18px;padding:24px 20px;width:100%;max-width:340px;box-shadow:0 12px 40px rgba(0,0,0,.2);}
+.proteina-box{background:linear-gradient(160deg,#1a3a5c,#2471a3);border-radius:18px;padding:24px 20px;width:100%;max-width:340px;box-shadow:0 12px 40px rgba(0,0,0,.2);}
 .proteina-title{font-weight:800;font-size:1rem;color:#222;margin-bottom:4px;}
 .proteina-sub{font-size:.75rem;color:#aaa;margin-bottom:18px;}
 .proteina-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
@@ -549,12 +595,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
   <div class="tab" data-tab="mesas"   onclick="switchTab('mesas')">MESAS</div>
   <div class="tab" data-tab="menu"    onclick="switchTab('menu')">MENÚ</div>
   <div class="tab" data-tab="kitchen" onclick="switchTab('kitchen')">COCINA <span class="tab-badge" id="badge-kitchen" style="display:none"></span></div>
-  <div class="tab" data-tab="historial" onclick="switchTab('historial')">HISTORIAL</div>
-  <div class="tab" data-tab="more" onclick="toggleMoreMenu()" id="tab-more">⋯ MÁS</div>
+  <div class="tab" data-tab="finanzas" onclick="switchTab('finanzas')">FINANZAS</div>
+  <div class="tab" data-tab="more" onclick="toggleMoreMenu()" id="tab-more" style="font-size:1.4rem;letter-spacing:0;padding-bottom:2px">⋮</div>
 </div>
 
 <!-- Menú desplegable para tabs secundarias -->
-<div id="more-menu" style="display:none;position:fixed;top:107px;right:0;background:#fff;border-radius:12px 0 0 12px;box-shadow:-4px 4px 20px rgba(0,0,0,.15);z-index:200;overflow:hidden;min-width:160px;">
+<div id="more-menu" style="display:none;position:fixed;top:107px;right:0;background:linear-gradient(160deg,#1a3a5c,#2471a3);border-radius:12px 0 0 12px;box-shadow:-4px 4px 20px rgba(0,0,0,.15);z-index:200;overflow:hidden;min-width:160px;">
+  <div class="more-menu-item" onclick="switchTab('historial');closeMoreMenu()" data-tab="historial">📋 Historial</div>
   <div class="more-menu-item" onclick="switchTab('costos');closeMoreMenu()" data-tab="costos">💰 Costos</div>
   <div class="more-menu-item" onclick="switchTab('prestamistas');closeMoreMenu()" data-tab="prestamistas">💳 Deudas</div>
   <div class="more-menu-item" onclick="switchTab('gastos');closeMoreMenu()" data-tab="gastos">🧾 Gastos</div>
@@ -567,6 +614,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f0f0;color:#222;user-select:n
   <div id="view-menu"     class="view"></div>
   <div id="view-kitchen"  class="view"></div>
   <div id="view-historial"class="view"></div>
+  <div id="view-finanzas" class="view"></div>
   <div id="view-costos"   class="view"></div>
   <div id="view-prestamistas" class="view"></div>
   <div id="view-gastos"   class="view"></div>
@@ -1144,7 +1192,7 @@ const payColor= m => ({efectivo:'#27ae60',nequi:'#8e44ad',credito:'#e74c3c'}[m]|
 const now     = () => new Date().toLocaleString('es-CO',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
 
 // ── TABS ──────────────────────────────────────────────────────────────────────
-const SECONDARY_TABS = ['costos','prestamistas','gastos'];
+const SECONDARY_TABS = ['historial','costos','prestamistas','gastos'];
 
 function toggleMoreMenu(){
   const m=document.getElementById('more-menu');
@@ -1181,6 +1229,7 @@ function switchTab(t){
   if(t==='menu')         renderMenuTab();
   if(t==='kitchen')      renderKitchen();
   if(t==='historial')    renderHistorial();
+  if(t==='finanzas')     renderFinanzas();
   if(t==='costos')       renderCostos();
   if(t==='prestamistas') renderPrestamistas();
   if(t==='gastos')       renderGastos();
@@ -1396,12 +1445,8 @@ function renderHistorial(){
   const paid=filtrarPorPeriodo(allPaid);
 
   // selector de periodo
-  const periodoHTML=`
-  <div style="position:relative;margin-bottom:12px">
-    <select onchange="setHistPeriodo(this.value)" style="width:100%;border:1.5px solid #ddd;border-radius:9px;padding:10px 14px;font-size:.88rem;font-family:'Nunito',sans-serif;font-weight:700;color:#333;background:#fff;outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;">
-      ${Object.entries(PERIODO_LABELS).map(([k,v])=>`<option value="${k}" ${histPeriodo===k?'selected':''}>${v}</option>`).join('')}
-    </select>
-    <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);pointer-events:none;color:#aaa">▼</span>
+  const periodoHTML=`<div class="period-bar">
+    ${[['hoy','Hoy'],['ayer','Ayer'],['semana','Semana'],['mes','Este mes'],['7dias','7 días'],['30dias','30 días'],['90dias','90 días']].map(([k,v])=>`<button class="period-pill ${histPeriodo===k?'active':''}" onclick="setHistPeriodo('${k}')">${v}</button>`).join('')}
   </div>`;
 
   // stats del período (incluye abonos de créditos)
@@ -1420,15 +1465,15 @@ function renderHistorial(){
   },0)-totalAbonado;
 
   const mainTabsHTML=`<div class="hist-tabs">
-    <button class="hist-tab-btn" onclick="setHistTab('lista')" style="background:${histTab==='lista'?'#2980b9':'#eee'};color:${histTab==='lista'?'#fff':'#555'}">📋 Lista</button>
-    <button class="hist-tab-btn" onclick="setHistTab('resumen')" style="background:${histTab==='resumen'?'#2980b9':'#eee'};color:${histTab==='resumen'?'#fff':'#555'}">📊 Resumen</button>
+    <button class="hist-tab-btn" onclick="setHistTab('lista')" style="background:${histTab==='lista'?'#2980b9':'rgba(255,255,255,.12)'};color:#fff;border:3px solid ${histTab==='lista'?'#1a3a5c':'transparent'}">📋 Lista</button>
+    <button class="hist-tab-btn" onclick="setHistTab('resumen')" style="background:${histTab==='resumen'?'#e67e22':'rgba(255,255,255,.12)'};color:#fff;border:3px solid ${histTab==='resumen'?'#5c3a1a':'transparent'}">📊 Resumen</button>
     <button class="hist-tab-btn" onclick="exportarHistorialPDF()" style="background:#e74c3c;color:#fff">📄 PDF</button>
   </div>`;
 
   const statsHTML=`<div class="stats-bar">
-    <div class="stat-box"><div class="stat-num" style="color:#27ae60">${fmt(totalEfectivo)}</div><div class="stat-lbl">Efectivo</div></div>
-    <div class="stat-box"><div class="stat-num" style="color:#2980b9">${fmt(totalNequi)}</div><div class="stat-lbl">Nequi</div></div>
-    <div class="stat-box"><div class="stat-num" style="color:#e74c3c">${fmt(totalPendiente)}</div><div class="stat-lbl">Por cobrar</div></div>
+    <div class="stat-box" style="background:linear-gradient(135deg,#1a5c2e,#27ae60);box-shadow:0 4px 14px rgba(39,174,96,.35)"><div class="stat-num" style="color:#fff">${fmt(totalEfectivo)}</div><div class="stat-lbl">Efectivo</div></div>
+    <div class="stat-box" style="background:linear-gradient(135deg,#3d1a5c,#8e44ad);box-shadow:0 4px 14px rgba(142,68,173,.35)"><div class="stat-num" style="color:#fff">${fmt(totalNequi)}</div><div class="stat-lbl">Nequi</div></div>
+    <div class="stat-box" style="background:linear-gradient(135deg,#5c1a1a,#e74c3c);box-shadow:0 4px 14px rgba(231,76,60,.35)"><div class="stat-num" style="color:#fff">${fmt(totalPendiente)}</div><div class="stat-lbl">Por cobrar</div></div>
   </div>`;
 
   if(histTab==='resumen'){
@@ -1453,10 +1498,10 @@ function renderHistorial(){
 
   // sub-tabs Efectivo / Nequi / Créditos
   const subTabsHTML=`<div class="hist-subtabs">
-    <button class="hist-subtab-btn" onclick="setHistSubTab('efectivo')" style="background:${histSubTab==='efectivo'?'#27ae60':'#eee'};color:${histSubTab==='efectivo'?'#fff':'#555'}">💵 Efectivo</button>
-    <button class="hist-subtab-btn" onclick="setHistSubTab('nequi')" style="background:${histSubTab==='nequi'?'#2980b9':'#eee'};color:${histSubTab==='nequi'?'#fff':'#555'}">📱 Nequi</button>
-    <button class="hist-subtab-btn" onclick="setHistSubTab('mixto')" style="background:${histSubTab==='mixto'?'#e67e22':'#eee'};color:${histSubTab==='mixto'?'#fff':'#555'}">💳 Mixto</button>
-    <button class="hist-subtab-btn" onclick="setHistSubTab('creditos')" style="background:${histSubTab==='creditos'?'#8e44ad':'#eee'};color:${histSubTab==='creditos'?'#fff':'#555'}">📋 Créditos</button>
+    <button class="hist-subtab-btn" onclick="setHistSubTab('efectivo')" style="background:#27ae60;color:#fff;border:3px solid ${histSubTab==='efectivo'?'#1a5c2e':'transparent'}">💵 Efectivo</button>
+    <button class="hist-subtab-btn" onclick="setHistSubTab('nequi')" style="background:#8e44ad;color:#fff;border:3px solid ${histSubTab==='nequi'?'#3d1a5c':'transparent'}">📱 Nequi</button>
+    <button class="hist-subtab-btn" onclick="setHistSubTab('mixto')" style="background:#e67e22;color:#fff;border:3px solid ${histSubTab==='mixto'?'#5c3a1a':'transparent'}">💳 Mixto</button>
+    <button class="hist-subtab-btn" onclick="setHistSubTab('creditos')" style="background:#e74c3c;color:#fff;border:3px solid ${histSubTab==='creditos'?'#5c1a1a':'transparent'}">📋 Créditos</button>
   </div>`;
 
   if(histSubTab==='creditos'){
@@ -1504,7 +1549,7 @@ function renderHistorial(){
           <div><div class="credito-grupo-nombre">${g.nombre} ${pagado?'✅':''}</div><div class="credito-grupo-meta">${g.pedidos.length} pedido(s)</div></div>
           <div class="credito-grupo-stats">
             <div class="credito-grupo-total">${fmt(g.totalDeuda)}</div>
-            ${!pagado?`<div class="credito-grupo-saldo">Debe: ${fmt(pendiente)}</div>`:`<div style="font-size:.7rem;color:#27ae60;font-weight:700">¡Todo pagado!</div>`}
+            ${!pagado?`<div class="credito-grupo-saldo">Debe: ${fmt(pendiente)}</div>`:`<div style="font-size:.7rem;color:rgba(200,255,200,.9);font-weight:700">¡Todo pagado!</div>`}
           </div>
         </div>
         <div class="credito-body" id="hist-body-${gId}">${pedidosHTML}</div>
@@ -1518,10 +1563,7 @@ function renderHistorial(){
   if(histSubTab==='mixto'){
     const mixtos=paid.filter(o=>o.payMethod==='mixto');
     const totalMixto=mixtos.reduce((s,o)=>s+totalOf(o),0);
-    const summaryMixto=`<div style="background:#fff;border-radius:10px;padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 5px rgba(0,0,0,.06)">
-      <span style="font-weight:800;font-size:.85rem;color:#555">💳 Total pagos mixtos</span>
-      <span style="font-family:'Bebas Neue';font-size:1.4rem;color:#e67e22;letter-spacing:1px">${fmt(totalMixto)}</span>
-    </div>`;
+    const summaryMixto='';
     if(!mixtos.length){
       el.innerHTML=`<div class="historial-wrap">${mainTabsHTML}${periodoHTML}${statsHTML}${subTabsHTML}${summaryMixto}<div class="empty" style="padding:2rem"><div class="empty-icon">💳</div><div class="empty-title">Sin pagos mixtos · ${PERIODO_LABELS[histPeriodo]}</div></div></div>`;
       return;
@@ -1536,15 +1578,15 @@ function renderHistorial(){
       const pagosLabel=(o.pagos||[]).map(p=>`${p.method==='nequi'?'📱':'💵'} ${p.method==='nequi'?'Nequi':'Efectivo'} ${fmt(p.amount)}`).join(' + ');
       const creditPago=(o.pagos||[]).find(p=>p.method==='credito');
       const creditLine=creditPago?`<div style="font-size:.72rem;color:#8e44ad;font-weight:700;margin-top:2px">📋 Crédito ${fmt(creditPago.amount)}${o.deudorName?' · '+o.deudorName:''}</div>`:'';
-      return `<div class="hist-order">
+      return `<div class="hist-order" style="background:linear-gradient(135deg,#5c3a1a,#e67e22);box-shadow:0 4px 14px rgba(230,126,34,.35)">
         <div class="hist-order-header" onclick="toggleHistOrder('mx${o.id}')">
           <div>
             <div class="hist-order-num">Pedido #${o.number} ${o.tableId?`· Mesa ${o.tableId}`:''}</div>
             <div class="hist-order-meta">${o.closedAt||''}</div>
           </div>
           <div style="text-align:right">
-            <div class="hist-order-total" style="color:#e67e22">${fmt(total)}</div>
-            <span class="pay-badge" style="background:#fdf2e9;color:#e67e22">💳 Mixto</span>
+            <div class="hist-order-total" style="color:#fff">${fmt(total)}</div>
+            <span class="pay-badge" style="background:rgba(255,255,255,.2);color:#fff">💳 Mixto</span>
             ${creditLine}
           </div>
         </div>
@@ -1553,7 +1595,7 @@ function renderHistorial(){
           <div style="margin-top:8px;padding:8px;background:#fdf2e9;border-radius:8px;font-size:.78rem;font-weight:700;color:#e67e22">${pagosLabel}</div>
           ${creditPago&&o.deudorName?`<div style="margin-top:4px;padding:6px 8px;background:#f5eef8;border-radius:8px;font-size:.75rem;color:#8e44ad;font-weight:700">📋 Crédito a nombre de: ${o.deudorName}</div>`:''}
           <div style="margin-top:10px;text-align:right">
-            <button onclick="if(confirm('¿Eliminar este pedido del historial?'))eliminarDelHistorial(${o.id})" style="background:#fdecea;color:#c0392b;border:none;border-radius:7px;padding:7px 12px;font-weight:800;font-size:.75rem;cursor:pointer;font-family:'Nunito',sans-serif;">🗑 Eliminar</button>
+            <button onclick="if(confirm('¿Eliminar este pedido del historial?'))eliminarDelHistorial(${o.id})" style="background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:7px;padding:7px 12px;font-weight:800;font-size:.75rem;cursor:pointer;font-family:'Nunito',sans-serif;">🗑 Eliminar</button>
           </div>
         </div>
       </div>`;
@@ -1580,12 +1622,9 @@ function renderHistorial(){
   const subtotalPedidos=filtered.reduce((s,o)=>s+totalOf(o),0);
   const subtotalAbonos=abonosDelMetodo.reduce((s,a)=>s+a.amount,0);
   const subtotal=subtotalPedidos+subtotalAbonos;
-  const color=method==='efectivo'?'#27ae60':'#2980b9';
+  const color=method==='efectivo'?'#27ae60':'#8e44ad';
   const icon=method==='efectivo'?'💵':'📱';
-  const summaryBox=`<div style="background:#fff;border-radius:10px;padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 5px rgba(0,0,0,.06)">
-    <span style="font-weight:800;font-size:.85rem;color:#555">${icon} Total ${method==='efectivo'?'Efectivo':'Nequi'}</span>
-    <span style="font-family:'Bebas Neue';font-size:1.4rem;color:${color};letter-spacing:1px">${fmt(subtotal)}</span>
-  </div>`;
+  const summaryBox='';
 
   if(!filtered.length&&!abonosDelMetodo.length){
     el.innerHTML=`<div class="historial-wrap">${mainTabsHTML}${periodoHTML}${statsHTML}${subTabsHTML}${summaryBox}<div class="empty" style="padding:2rem"><div class="empty-icon">${icon}</div><div class="empty-title">Sin pagos en ${method==='efectivo'?'Efectivo':'Nequi'} · ${PERIODO_LABELS[histPeriodo]}</div></div></div>`;
@@ -1606,36 +1645,38 @@ function renderHistorial(){
   const ordersHTML=todasTransacciones.map(t=>{
     if(t.tipo==='pedido'){
       const o=t.o; const total=totalOf(o);
-      return `<div class="hist-order">
+      const hGrad=method==='efectivo'?'linear-gradient(135deg,#1a5c2e,#27ae60)':'linear-gradient(135deg,#3d1a5c,#8e44ad)';
+      const hShadow=method==='efectivo'?'rgba(39,174,96,.35)':'rgba(142,68,173,.35)';
+      return `<div class="hist-order" style="background:${hGrad};box-shadow:0 4px 14px ${hShadow}">
         <div class="hist-order-header" onclick="toggleHistOrder('o'+${o.id})">
           <div>
             <div class="hist-order-num">Pedido #${o.number} ${o.tableId?`· Mesa ${o.tableId}`:''}</div>
             <div class="hist-order-meta">${o.closedAt||''}</div>
           </div>
           <div style="text-align:right">
-            <div class="hist-order-total" style="color:${color}">${fmt(total)}</div>
-            <span class="pay-badge" style="background:${color}1a;color:${color}">${icon} ${method==='efectivo'?'Efectivo':'Nequi'}</span>
+            <div class="hist-order-total" style="color:#fff">${fmt(total)}</div>
+            <span class="pay-badge" style="background:rgba(255,255,255,.2);color:#fff">${icon} ${method==='efectivo'?'Efectivo':'Nequi'}</span>
           </div>
         </div>
         <div class="hist-order-body" id="hist-body-o${o.id}">
           ${o.items.map(i=>`<div class="hist-item-row"><span>${i.qty} ${i.name}${i.note?` <span style="color:#e67e00;font-size:.7rem">(${i.note})</span>`:''}</span><span>${fmt(i.price*i.qty)}</span></div>`).join('')}
           <div style="text-align:right;margin-top:6px;font-family:'Bebas Neue';font-size:1.1rem;color:${color}">${fmt(total)}</div>
           <div style="margin-top:10px;text-align:right">
-            <button onclick="if(confirm('¿Eliminar este pedido del historial?'))eliminarDelHistorial(${o.id})" style="background:#fdecea;color:#c0392b;border:none;border-radius:7px;padding:7px 12px;font-weight:800;font-size:.75rem;cursor:pointer;font-family:'Nunito',sans-serif;">🗑 Eliminar</button>
+            <button onclick="if(confirm('¿Eliminar este pedido del historial?'))eliminarDelHistorial(${o.id})" style="background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:7px;padding:7px 12px;font-weight:800;font-size:.75rem;cursor:pointer;font-family:'Nunito',sans-serif;">🗑 Eliminar</button>
           </div>
         </div>
       </div>`;
     } else {
       const a=t.a;
-      return `<div class="hist-order" style="border-left:4px solid ${color}">
+      return `<div class="hist-order" style="background:${hGrad};box-shadow:0 4px 14px ${hShadow}">
         <div class="hist-order-header" style="cursor:default">
           <div>
             <div class="hist-order-num">💳 Abono · ${a.deudorName||'Sin nombre'}</div>
             <div class="hist-order-meta">${a.fecha||''} · Pago de deuda a crédito</div>
           </div>
           <div style="text-align:right">
-            <div class="hist-order-total" style="color:${color}">${fmt(a.amount)}</div>
-            <span class="pay-badge" style="background:${color}1a;color:${color}">${icon} ${method==='efectivo'?'Efectivo':'Nequi'}</span>
+            <div class="hist-order-total" style="color:#fff">${fmt(a.amount)}</div>
+            <span class="pay-badge" style="background:rgba(255,255,255,.2);color:#fff">${icon} ${method==='efectivo'?'Efectivo':'Nequi'}</span>
           </div>
         </div>
       </div>`;
@@ -1683,9 +1724,9 @@ function selAbonoMet(m){
   ['efectivo','nequi'].forEach(x=>{
     const btn=document.getElementById('abono-met-'+x);
     if(!btn)return;
-    btn.style.background=x===m?(x==='efectivo'?'#27ae60':'#2980b9'):'#fff';
+    btn.style.background=x===m?(x==='efectivo'?'#27ae60':'#8e44ad'):'#fff';
     btn.style.color=x===m?'#fff':'#555';
-    btn.style.borderColor=x===m?(x==='efectivo'?'#27ae60':'#2980b9'):'#ddd';
+    btn.style.borderColor=x===m?(x==='efectivo'?'#27ae60':'#8e44ad'):'#ddd';
   });
 }
 
@@ -1839,8 +1880,8 @@ function renderEditor(){
   const cat=MENU.find(c=>c.id===activeCat);
   const qty_badge = editing.items.reduce((s,i)=>s+i.qty,0);
   document.getElementById('cats-bar').innerHTML=
-    `<button class="cat-btn" onclick="setCat('pedido')" style="background:${activeCat==='pedido'?'#27ae60':'#eee'};color:${activeCat==='pedido'?'#fff':'#555'};position:relative">🛒 Pedido${qty_badge>0?`<span style="position:absolute;top:-5px;right:-5px;background:#e74c3c;color:#fff;border-radius:50%;font-size:.6rem;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-weight:900">${qty_badge}</span>`:''}</button>`
-    + MENU.map(c=>`<button class="cat-btn" onclick="setCat('${c.id}')" style="background:${activeCat===c.id?'#e74c3c':'#eee'};color:${activeCat===c.id?'#fff':'#555'}">${c.icon} ${c.name}</button>`).join('');
+    `<button class="cat-btn" onclick="setCat('pedido')" style="background:${activeCat==='pedido'?'#27ae60':'rgba(255,255,255,.12)'};color:#fff;border:3px solid ${activeCat==='pedido'?'#1a5c2e':'transparent'};position:relative">🛒 Pedido${qty_badge>0?`<span style="position:absolute;top:-5px;right:-5px;background:#e74c3c;color:#fff;border-radius:50%;font-size:.6rem;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-weight:900">${qty_badge}</span>`:''}</button>`
+    + MENU.map(c=>`<button class="cat-btn" onclick="setCat('${c.id}')" style="background:${activeCat===c.id?'#e74c3c':'rgba(255,255,255,.12)'};color:#fff;border:3px solid ${activeCat===c.id?'#5c1a1a':'transparent'}">${c.icon} ${c.name}</button>`).join('');
   const nb=document.getElementById('cat-note-bar');
 
   // ── PESTAÑA PEDIDO ──────────────────────────────────────────────────────────
@@ -2319,6 +2360,140 @@ function finalizePagoMixto(met1, monto1, met2, monto2, deudorName){
   _syncBg(()=>{ REF.tables.set(tableStates); REF.counter.set(orderCounter); });
 }
 
+// ── FINANZAS ──────────────────────────────────────────────────────────────────
+let finPeriodo = 'siempre';
+const FIN_PERIODOS = {hoy:'Hoy',semana:'Esta semana',mes:'Este mes','7dias':'Últimos 7 días','30dias':'Últimos 30 días','90dias':'Últimos 90 días',siempre:'Desde siempre'};
+
+function finFechaOk(fechaStr){
+  if(finPeriodo === 'siempre') return true;
+  if(!fechaStr) return false;
+  const p = fechaStr.match(/(\d+)\/(\d+)\/(\d+)/);
+  if(!p) return false;
+  const fd = new Date(p[3], p[2]-1, p[1]);
+  const ahora = new Date();
+  const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+  if(finPeriodo==='hoy')    return fd >= hoy;
+  if(finPeriodo==='semana'){ const lu=new Date(hoy); lu.setDate(hoy.getDate()-((hoy.getDay()+6)%7)); return fd>=lu; }
+  if(finPeriodo==='mes')    return fd >= new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+  if(finPeriodo==='7dias')  return fd >= new Date(ahora - 7*864e5);
+  if(finPeriodo==='30dias') return fd >= new Date(ahora - 30*864e5);
+  if(finPeriodo==='90dias') return fd >= new Date(ahora - 90*864e5);
+  return true;
+}
+
+function renderFinanzas(){
+  const el = document.getElementById('view-finanzas');
+  if(!el) return;
+
+  const closed = orders.filter(o => isClosed(o) && finFechaOk(o.closedAt));
+
+  // ── Ingresos por método ────────────────────────────────────────────────────
+  let inEfectivo = 0, inNequi = 0;
+  closed.forEach(o => {
+    if(o.payMethod === 'efectivo') inEfectivo += totalOf(o);
+    else if(o.payMethod === 'nequi') inNequi += totalOf(o);
+    else if(o.payMethod === 'mixto' && o.pagos){
+      o.pagos.forEach(p => {
+        if(p.method === 'efectivo') inEfectivo += p.amount;
+        else if(p.method === 'nequi') inNequi += p.amount;
+      });
+    }
+  });
+
+  // Abonos recibidos en el período
+  orders.filter(o => isClosed(o)).forEach(o => {
+    (Array.isArray(o.abonos) ? o.abonos : Object.values(o.abonos||{})).forEach(a => {
+      if(!finFechaOk(a.fecha)) return;
+      if(a.payMethod === 'efectivo') inEfectivo += a.amount;
+      else if(a.payMethod === 'nequi') inNequi += a.amount;
+    });
+  });
+
+  // ── Gastos por método ──────────────────────────────────────────────────────
+  const gastosP = gastos.filter(g => finFechaOk(g.fecha));
+  const gastEfectivo = gastosP.filter(g => (g.metodo||'efectivo') === 'efectivo').reduce((s,g) => s+g.monto, 0);
+  const gastNequi   = gastosP.filter(g => g.metodo === 'nequi').reduce((s,g) => s+g.monto, 0);
+
+  const dispEfectivo = inEfectivo - gastEfectivo;
+  const dispNequi    = inNequi   - gastNequi;
+
+  // ── Por cobrar (créditos pendientes) ──────────────────────────────────────
+  const creditOrders = orders.filter(o => o.status==='credito'||o.status==='mixto-credito');
+  const deudoresMap = {};
+  creditOrders.forEach(o => {
+    const nombre = (o.deudorName||'Sin nombre').trim();
+    if(!deudoresMap[nombre]) deudoresMap[nombre] = {total:0, abonado:0};
+    const creditAmt = (o.payMethod==='mixto'&&o.pagos) ? (o.pagos.find(p=>p.method==='credito')?.amount||totalOf(o)) : totalOf(o);
+    deudoresMap[nombre].total += creditAmt;
+    const abonos = Array.isArray(o.abonos) ? o.abonos : Object.values(o.abonos||{});
+    deudoresMap[nombre].abonado += abonos.reduce((s,a)=>s+a.amount,0);
+  });
+  const porCobrar = Object.values(deudoresMap).reduce((s,d)=>s+(d.total-d.abonado),0);
+
+  // ── Deudas del negocio (prestamistas) ─────────────────────────────────────
+  const deudasNegocio = prestamistas.reduce((s,p)=>s+saldoPendiente(p),0);
+
+  // ── Balance neto ──────────────────────────────────────────────────────────
+  const balance = dispEfectivo + dispNequi + porCobrar - deudasNegocio;
+  const balColor = balance >= 0 ? '#2ecc71' : '#e74c3c';
+
+  // ── Deudores detalle ──────────────────────────────────────────────────────
+  const deudoresHTML = Object.entries(deudoresMap)
+    .map(([n,d])=>{ const pend=d.total-d.abonado; return pend>0?`<div class="fin-deudor-row"><div><div class="fin-deudor-name">${n}</div><div class="fin-deudor-must" style="color:rgba(255,200,200,.9)">Debe: ${fmt(pend)}</div></div><div style="font-family:'Bebas Neue';font-size:1.1rem;color:#e74c3c">${fmt(pend)}</div></div>`:''})
+    .join('') || '<div style="color:#ccc;font-size:.8rem;text-align:center;padding:8px">Sin deudores activos</div>';
+
+  const prestHTML = prestamistas.filter(p=>saldoPendiente(p)>0)
+    .map(p=>`<div class="fin-deudor-row"><div><div class="fin-deudor-name">${p.nombre}</div><div class="fin-deudor-must">Pendiente: ${fmt(saldoPendiente(p))}</div></div><div style="font-family:'Bebas Neue';font-size:1.1rem;color:#e67e22">${fmt(saldoPendiente(p))}</div></div>`)
+    .join('') || '<div style="color:#ccc;font-size:.8rem;text-align:center;padding:8px">Sin deudas del negocio</div>';
+
+  el.innerHTML = `<div class="fin-wrap">
+    <div class="period-bar" style="margin-bottom:8px">
+      ${[['hoy','Hoy'],['semana','Semana'],['mes','Este mes'],['7dias','7 días'],['30dias','30 días'],['90dias','90 días'],['siempre','Todo']].map(([k,v])=>`<button class="period-pill ${finPeriodo===k?'active':''}" onclick="finPeriodo='${k}';renderFinanzas()">${v}</button>`).join('')}
+    </div>
+
+    <!-- Balance neto -->
+    <div class="fin-balance">
+      <div class="fin-balance-title">📊 Balance neto · ${FIN_PERIODOS[finPeriodo]}</div>
+      <div class="fin-balance-num" style="color:${balColor}">${fmt(Math.round(balance))}</div>
+      <div style="font-size:.72rem;color:#aaa;margin-top:6px">Efectivo + Nequi + Por cobrar − Deudas</div>
+    </div>
+
+    <!-- Efectivo -->
+    <div class="fin-card" style="background:linear-gradient(135deg,#1a5c2e,#27ae60);box-shadow:0 4px 16px rgba(39,174,96,.4)">
+      <div class="fin-card-header"><span class="fin-card-icon">💵</span><span class="fin-card-title">EFECTIVO DISPONIBLE</span></div>
+      <div class="fin-main-num" style="color:${dispEfectivo>=0?'#27ae60':'#e74c3c'}">${fmt(Math.round(dispEfectivo))}</div>
+      <div class="fin-breakdown">
+        <div class="fin-row"><span>+ Cobrado en efectivo</span><span style="color:#27ae60">${fmt(Math.round(inEfectivo))}</span></div>
+        <div class="fin-row"><span>− Gastos en efectivo</span><span style="color:#e74c3c">${fmt(Math.round(gastEfectivo))}</span></div>
+      </div>
+    </div>
+
+    <!-- Nequi -->
+    <div class="fin-card" style="background:linear-gradient(135deg,#3d1a5c,#8e44ad);box-shadow:0 4px 16px rgba(142,68,173,.4)">
+      <div class="fin-card-header"><span class="fin-card-icon">📱</span><span class="fin-card-title">NEQUI DISPONIBLE</span></div>
+      <div class="fin-main-num" style="color:${dispNequi>=0?'#8e44ad':'#e74c3c'}">${fmt(Math.round(dispNequi))}</div>
+      <div class="fin-breakdown">
+        <div class="fin-row"><span>+ Cobrado por Nequi</span><span style="color:#27ae60">${fmt(Math.round(inNequi))}</span></div>
+        <div class="fin-row"><span>− Gastos por Nequi</span><span style="color:#e74c3c">${fmt(Math.round(gastNequi))}</span></div>
+      </div>
+    </div>
+
+    <!-- Por cobrar -->
+    <div class="fin-card" style="background:linear-gradient(135deg,#5c1a1a,#c0392b);box-shadow:0 4px 16px rgba(192,57,43,.4)">
+      <div class="fin-card-header"><span class="fin-card-icon">📋</span><span class="fin-card-title">POR COBRAR (CRÉDITOS)</span></div>
+      <div class="fin-main-num" style="color:#8e44ad">${fmt(Math.round(porCobrar))}</div>
+      <div class="fin-breakdown">${deudoresHTML}</div>
+    </div>
+
+    <!-- Deudas del negocio -->
+    <div class="fin-card" style="background:linear-gradient(135deg,#5c3a1a,#e67e22);box-shadow:0 4px 16px rgba(230,126,34,.35)">
+      <div class="fin-card-header"><span class="fin-card-icon">🏦</span><span class="fin-card-title">DEUDAS DEL NEGOCIO</span></div>
+      <div class="fin-main-num" style="color:#e67e22">${fmt(Math.round(deudasNegocio))}</div>
+      <div class="fin-breakdown">${prestHTML}</div>
+    </div>
+  </div>`;
+}
+
 // ── COSTOS: INGREDIENTES Y PRECIOS ───────────────────────────────────────────
 
 // Mapa: id del MENU waiterio → id plato app ingredientes + variante opcional
@@ -2589,12 +2764,8 @@ function renderCostos(){
   histPeriodo=savedHP; // restaurar
 
   // Selector de período
-  const periodoHTML=`
-  <div style="position:relative;margin-bottom:12px">
-    <select onchange="setCostoPeriodo(this.value)" style="width:100%;border:1.5px solid #ddd;border-radius:9px;padding:10px 14px;font-size:.88rem;font-family:'Nunito',sans-serif;font-weight:700;color:#333;background:#fff;outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;">
-      ${Object.entries(PERIODO_LABELS).map(([k,v])=>`<option value="${k}" ${costoPeriodo===k?'selected':''}>${v}</option>`).join('')}
-    </select>
-    <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);pointer-events:none;color:#aaa">▼</span>
+  const periodoHTML=`<div class="period-bar">
+    ${[['hoy','Hoy'],['ayer','Ayer'],['semana','Semana'],['mes','Este mes'],['7dias','7 días'],['30dias','30 días'],['90dias','90 días']].map(([k,v])=>`<button class="period-pill ${costoPeriodo===k?'active':''}" onclick="setCostoPeriodo('${k}')">${v}</button>`).join('')}
   </div>`;
 
   // Calcular totales del período filtrado
@@ -2625,10 +2796,10 @@ function renderCostos(){
   const margen=totalVentas>0?((ganancia/totalVentas)*100).toFixed(1):0;
 
   const statsHTML=`<div class="costo-stat-bar">
-    <div class="costo-stat-box"><div class="costo-stat-num" style="color:#e67e22">${fmt(Math.round(totalGastos))}</div><div class="costo-stat-lbl">🧾 Gastos</div></div>
-    <div class="costo-stat-box"><div class="costo-stat-num" style="color:#27ae60">${fmt(Math.round(ganancia))}</div><div class="costo-stat-lbl">✅ Ganancia neta</div></div>
-    <div class="costo-stat-box"><div class="costo-stat-num" style="color:#2980b9">${fmt(totalVentas)}</div><div class="costo-stat-lbl">📦 Ventas</div></div>
-    <div class="costo-stat-box"><div class="costo-stat-num" style="color:#8e44ad">${margen}%</div><div class="costo-stat-lbl">📊 Margen</div></div>
+    <div class="costo-stat-box" style="background:linear-gradient(135deg,#5c3a1a,#e67e22);box-shadow:0 4px 14px rgba(230,126,34,.35)"><div class="costo-stat-num" style="color:#fff">${fmt(Math.round(totalGastos))}</div><div class="costo-stat-lbl">🧾 Gastos</div></div>
+    <div class="costo-stat-box" style="background:linear-gradient(135deg,#1a4a3a,#16a085);box-shadow:0 4px 14px rgba(22,160,133,.35)"><div class="costo-stat-num" style="color:#fff">${fmt(Math.round(ganancia))}</div><div class="costo-stat-lbl">✅ Ganancia neta</div></div>
+    <div class="costo-stat-box" style="background:linear-gradient(135deg,#1a3a5c,#2980b9);box-shadow:0 4px 14px rgba(41,128,185,.35)"><div class="costo-stat-num" style="color:#fff">${fmt(totalVentas)}</div><div class="costo-stat-lbl">📦 Ventas</div></div>
+    <div class="costo-stat-box" style="background:linear-gradient(135deg,#1a1a4a,#2c3e50);box-shadow:0 4px 14px rgba(44,62,80,.4)"><div class="costo-stat-num" style="color:#fff">${margen}%</div><div class="costo-stat-lbl">📊 Margen</div></div>
   </div>`;
 
   const subTabsHTML=`<div class="costos-subtab-bar">
@@ -2732,8 +2903,8 @@ function renderPrestamistas(){
   const saldados=prestamistas.filter(p=>saldoPendiente(p)<=0);
 
   const statsHTML=`<div class="prest-summary-bar">
-    <div class="prest-stat-box"><div class="prest-stat-num" style="color:#e74c3c">${fmt(totalDeuda)}</div><div class="prest-stat-lbl">💸 Total pendiente</div></div>
-    <div class="prest-stat-box"><div class="prest-stat-num" style="color:#27ae60">${fmt(totalAbonado)}</div><div class="prest-stat-lbl">✅ Total abonado</div></div>
+    <div class="prest-stat-box" style="background:linear-gradient(135deg,#5c1a1a,#c0392b);box-shadow:0 4px 14px rgba(192,57,43,.35)"><div class="prest-stat-num" style="color:#fff">${fmt(totalDeuda)}</div><div class="prest-stat-lbl">💸 Total pendiente</div></div>
+    <div class="prest-stat-box" style="background:linear-gradient(135deg,#1a5c2e,#27ae60);box-shadow:0 4px 14px rgba(39,174,96,.35)"><div class="prest-stat-num" style="color:#fff">${fmt(totalAbonado)}</div><div class="prest-stat-lbl">✅ Total abonado</div></div>
   </div>`;
 
   const cardHTML=(p)=>{
@@ -2925,30 +3096,34 @@ function renderGastos(){
 
   const METODO_STYLE={
     efectivo:{label:'💵 Efectivo',bg:'#e8f8f0',color:'#27ae60'},
-    nequi:{label:'📱 Nequi',bg:'#f0f7ff',color:'#2980b9'},
+    nequi:{label:'📱 Nequi',bg:'#f3e8ff',color:'#8e44ad'},
     transferencia:{label:'🏦 Transf.',bg:'#f9f0ff',color:'#8e44ad'},
   };
 
   const statsHTML=`<div class="gastos-summary-bar">
-    <div class="gastos-stat-box"><div class="gastos-stat-num" style="color:#27ae60">${fmt(totalEfectivo)}</div><div class="gastos-stat-lbl">💵 Efectivo</div></div>
-    <div class="gastos-stat-box"><div class="gastos-stat-num" style="color:#2980b9">${fmt(totalNequi)}</div><div class="gastos-stat-lbl">📱 Nequi</div></div>
-    <div class="gastos-stat-box"><div class="gastos-stat-num" style="color:#8e44ad">${fmt(totalTransf)}</div><div class="gastos-stat-lbl">🏦 Transf.</div></div>
+    <div class="gastos-stat-box" style="background:linear-gradient(135deg,#1a5c2e,#27ae60);box-shadow:0 4px 14px rgba(39,174,96,.35)"><div class="gastos-stat-num" style="color:#fff">${fmt(totalEfectivo)}</div><div class="gastos-stat-lbl">💵 Efectivo</div></div>
+    <div class="gastos-stat-box" style="background:linear-gradient(135deg,#3d1a5c,#8e44ad);box-shadow:0 4px 14px rgba(142,68,173,.35)"><div class="gastos-stat-num" style="color:#fff">${fmt(totalNequi)}</div><div class="gastos-stat-lbl">📱 Nequi</div></div>
+    <div class="gastos-stat-box" style="background:linear-gradient(135deg,#1a2a5c,#1a5276);box-shadow:0 4px 14px rgba(26,82,118,.35)"><div class="gastos-stat-num" style="color:#fff">${fmt(totalTransf)}</div><div class="gastos-stat-lbl">🏦 Transf.</div></div>
   </div>
   <div style="background:#fff;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 5px rgba(0,0,0,.06)">
     <span style="font-size:.8rem;font-weight:800;color:#555">TOTAL PERÍODO</span>
     <span style="font-family:'Bebas Neue';font-size:1.5rem;color:#e67e22;letter-spacing:1px">${fmt(totalGeneral)}</span>
   </div>`;
 
-  const periodoHTML=`<div class="gastos-periodo-wrap">
-    <select onchange="setGastoPeriodo(this.value)" style="width:100%;border:1.5px solid #ddd;border-radius:9px;padding:10px 14px;font-size:.88rem;font-family:'Nunito',sans-serif;font-weight:700;color:#333;background:#fff;outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;">
-      ${Object.entries(PERIODO_LABELS).map(([k,v])=>`<option value="${k}" ${gastoPeriodo===k?'selected':''}>${v}</option>`).join('')}
-    </select>
-    <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);pointer-events:none;color:#aaa">▼</span>
+  const periodoHTML=`<div class="period-bar">
+    ${[['hoy','Hoy'],['ayer','Ayer'],['semana','Semana'],['mes','Este mes'],['7dias','7 días'],['30dias','30 días'],['90dias','90 días']].map(([k,v])=>`<button class="period-pill ${gastoPeriodo===k?'active':''}" onclick="setGastoPeriodo('${k}')">${v}</button>`).join('')}
   </div>`;
 
   const listaHTML=gastosFiltrados.length ? gastosFiltrados.map(g=>{
     const st=METODO_STYLE[g.metodo]||{label:g.metodo,bg:'#f5f5f5',color:'#888'};
-    return `<div class="gasto-card">
+    const gBg = g.metodo==='nequi'
+      ? 'linear-gradient(135deg,#3d1a5c,#8e44ad)'
+      : g.metodo==='transferencia'
+      ? 'linear-gradient(135deg,#1a2a5c,#1a5276)'
+      : g.metodo==='credito'
+      ? 'linear-gradient(135deg,#5c1a1a,#e74c3c)'
+      : 'linear-gradient(135deg,#1a5c2e,#27ae60)'; // efectivo default
+    return `<div class="gasto-card" style="background:${gBg}">
       <div class="gasto-info">
         <div class="gasto-concepto">${g.concepto}</div>
         ${g.nota?`<div class="gasto-meta">${g.nota}</div>`:''}
@@ -3220,7 +3395,7 @@ function exportarHistorialPDF(){
 
 <div class="stats">
   <div class="stat"><div class="stat-val" style="color:#27ae60">${fmtP(totalEfectivo)}</div><div class="stat-lbl">💵 Efectivo</div></div>
-  <div class="stat"><div class="stat-val" style="color:#2980b9">${fmtP(totalNequi)}</div><div class="stat-lbl">📱 Nequi</div></div>
+  <div class="stat"><div class="stat-val" style="color:#8e44ad">${fmtP(totalNequi)}</div><div class="stat-lbl">📱 Nequi</div></div>
   <div class="stat"><div class="stat-val" style="color:#e74c3c">${fmtP(totalPendiente)}</div><div class="stat-lbl">📋 Por cobrar</div></div>
   <div class="stat"><div class="stat-val" style="color:#222">${fmtP(totalGeneral)}</div><div class="stat-lbl">📦 Total cobrado</div></div>
 </div>
@@ -3237,6 +3412,7 @@ function exportarHistorialPDF(){
   ${listaPedidos.map(o=>{
     const metodo = o.status==='credito'||o.status==='mixto-credito'?'cre':o.payMethod==='mixto'?'mix':o.payMethod==='nequi'?'neq':'efe';
     const label  = o.status==='credito'?'Crédito':o.status==='mixto-credito'?'Mixto+Crédito':o.payMethod==='mixto'?'💳 '+((o.pagos||[]).map(p=>(p.method==='nequi'?'Nequi':'Efectivo')+' '+fmt(p.amount)).join(' + ')):o.payMethod==='nequi'?'Nequi':'Efectivo';
+    const mColor = metodo==='neq'?'#8e44ad':metodo==='cre'?'#8e44ad':metodo==='mix'?'#e67e22':'#27ae60';
     const items  = o.items.map(i=>`${i.qty}×${i.name}`).join(', ');
     return `<tr>
       <td>#${o.number||'-'}</td>
