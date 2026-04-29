@@ -1742,6 +1742,7 @@ function confirmAbono(){
     return;
   }
   if(!o.abonos) o.abonos=[];
+  else if(!Array.isArray(o.abonos)) o.abonos=Object.values(o.abonos);
   o.abonos.push({amount, fecha:now(), payMethod:abonoMetodo, deudorName:o.deudorName||'Sin nombre'});
   closeAbonoModal();
   renderHistorial(); // optimistic — actualiza inmediatamente
@@ -2423,7 +2424,7 @@ function renderFinanzas(){
 
   // ── Balance neto ──────────────────────────────────────────────────────────
   const totalGastosAll = gastosP.reduce((s,g)=>s+g.monto, 0);
-  const balance = dispEfectivo + dispNequi + porCobrar - deudasNegocio - totalGastosAll;
+  const balance = dispEfectivo + dispNequi + porCobrar - deudasNegocio;
   const balColor = balance >= 0 ? '#2ecc71' : '#e74c3c';
 
   // ── Deudores detalle ──────────────────────────────────────────────────────
@@ -2444,7 +2445,7 @@ function renderFinanzas(){
     <div class="fin-balance">
       <div class="fin-balance-title">📊 Balance neto · ${FIN_PERIODOS[finPeriodo]}</div>
       <div class="fin-balance-num" style="color:${balColor}">${fmt(Math.round(balance))}</div>
-      <div style="font-size:.72rem;color:#aaa;margin-top:6px">Efectivo + Nequi + Por cobrar − Deudas − Gastos</div>
+      <div style="font-size:.72rem;color:#aaa;margin-top:6px">Efectivo + Nequi + Por cobrar − Deudas</div>
     </div>
 
     <!-- Efectivo -->
