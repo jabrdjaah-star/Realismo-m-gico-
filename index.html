@@ -1745,8 +1745,8 @@ function confirmAbono(){
   else if(!Array.isArray(o.abonos)) o.abonos=Object.values(o.abonos);
   o.abonos.push({amount, fecha:now(), payMethod:abonoMetodo, deudorName:o.deudorName||'Sin nombre'});
   closeAbonoModal();
-  renderHistorial(); // optimistic — actualiza inmediatamente
-  saveOrder(o).catch(e=>console.error('saveOrder abono error',e));
+  saveData();
+  renderHistorial();
 }
 function pagarTotalCredito(orderId){
   openAbonoModal(orderId);
