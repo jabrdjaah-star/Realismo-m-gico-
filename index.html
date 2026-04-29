@@ -845,8 +845,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#1a3a5c 0
       <span class="sheet-total-val" id="editor-total-val" style="color:#f0c040">$0</span>
     </div>
     <div class="sheet-actions">
-      <button class="btn-save" onclick="saveOrder(false)">Guardar</button>
-      <button class="btn-send" onclick="saveOrder(true)">🍳 Enviar a Cocina</button>
+      <button class="btn-save" onclick="saveOrderFromEditor(false)">Guardar</button>
+      <button class="btn-send" onclick="saveOrderFromEditor(true)">🍳 Enviar a Cocina</button>
     </div>
   </div>
 </div>
@@ -1540,7 +1540,7 @@ function renderHistorial(){
             ${!pagado?`<div class="credito-grupo-saldo">Debe: ${fmt(pendiente)}</div>`:`<div style="font-size:.7rem;color:rgba(200,255,200,.9);font-weight:700">¡Todo pagado!</div>`}
           </div>
         </div>
-        <div class="credito-body" id="hist-body-${gId}">${pedidosHTML}</div>
+        <div class="credito-grupo-body" id="hist-body-${gId}">${pedidosHTML}</div>
       </div>`;
     }).join('');
     el.innerHTML=`<div class="historial-wrap">${mainTabsHTML}${periodoHTML}${statsHTML}${subTabsHTML}${gruposHTML}</div>`;
@@ -1745,8 +1745,8 @@ function confirmAbono(){
   else if(!Array.isArray(o.abonos)) o.abonos=Object.values(o.abonos);
   o.abonos.push({amount, fecha:now(), payMethod:abonoMetodo, deudorName:o.deudorName||'Sin nombre'});
   closeAbonoModal();
-  saveData();
-  renderHistorial();
+  renderHistorial(); // optimistic — actualiza inmediatamente
+  saveOrder(o).catch(e=>console.error('saveOrder abono error',e));
 }
 function pagarTotalCredito(orderId){
   openAbonoModal(orderId);
@@ -1798,16 +1798,16 @@ function renderSheetActions(){
   const estaEnCocina=editing.status==='sent'||editing.status==='ready';
   if(estaEnCocina){
     actions.innerHTML=`
-      <button class="btn-save" onclick="saveOrder(false)" style="flex:1">💾 Solo guardar</button>
-      <button class="btn-send" onclick="saveOrder(true)" style="flex:2;background:#e67e00">🔄 Actualizar cocina</button>`;
+      <button class="btn-save" onclick="saveOrderFromEditor(false)" style="flex:1">💾 Solo guardar</button>
+      <button class="btn-send" onclick="saveOrderFromEditor(true)" style="flex:2;background:#e67e00">🔄 Actualizar cocina</button>`;
   } else {
     actions.innerHTML=`
-      <button class="btn-save" onclick="saveOrder(false)">Guardar</button>
-      <button class="btn-send" onclick="saveOrder(true)">🍳 Enviar a Cocina</button>`;
+      <button class="btn-save" onclick="saveOrderFromEditor(false)">Guardar</button>
+      <button class="btn-send" onclick="saveOrderFromEditor(true)">🍳 Enviar a Cocina</button>`;
   }
 }
 
-function saveOrder(sendKitchen){
+function saveOrderFromEditor(sendKitchen){
   if(!editing||!editing.items.length)return;
 
   const eraEnCocina=editing.status==='sent'||editing.status==='ready';
@@ -2182,15 +2182,6 @@ function changeQty(itemId,d){
 function setNote(itemId,val){const item=editing.items.find(i=>i.itemId===itemId);if(item)item.note=val;}
 function startNote(itemId){editingNoteId=itemId;renderSheet();}
 function confirmNote(itemId){editingNoteId=null;renderSheet();}
-
-function saveOrder(sendKitchen){
-  if(!editing||!editing.items.length)return;
-  editing.status=sendKitchen?'sent':'draft';
-  const idx=orders.findIndex(o=>o.id===editing.id);
-  if(idx>=0) orders[idx]=editing; else orders.push(editing);
-  if(editing.tableId) tableStates[editing.tableId]={status:'occupied'};
-  closeCart(); closeEditor(); saveData(); switchTab('pedidos');
-}
 
 // ── CUENTA ────────────────────────────────────────────────────────────────────
 function openBill(orderId){
