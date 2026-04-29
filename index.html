@@ -1734,19 +1734,20 @@ function openAbonoModal(orderId){
 }
 function closeAbonoModal(){document.getElementById('credito-modal').classList.remove('open');abonoOrderId=null;}
 function confirmAbono(){
-  const amount=parseInt(document.getElementById('abono-amount-input').value)||0;
+  const raw=document.getElementById('abono-amount-input').value;
+  const amount=Math.floor(parseFloat(String(raw).replace(/,/g,'.'))||0);
   if(!amount||amount<=0){document.getElementById('abono-amount-input').focus();return;}
   const o=orders.find(x=>String(x.id)===String(abonoOrderId));
   if(!o){
-    alert('⚠️ No se encontró el pedido.\nBuscando ID: '+abonoOrderId+'\nIDs disponibles: '+orders.map(x=>x.id).join(', '));
+    alert('⚠️ No se encontró el pedido. ID: '+abonoOrderId);
     return;
   }
   if(!o.abonos) o.abonos=[];
   else if(!Array.isArray(o.abonos)) o.abonos=Object.values(o.abonos);
   o.abonos.push({amount, fecha:now(), payMethod:abonoMetodo, deudorName:o.deudorName||'Sin nombre'});
   closeAbonoModal();
-  renderHistorial(); // optimistic — actualiza inmediatamente
-  saveOrder(o).catch(e=>console.error('saveOrder abono error',e));
+  saveData();
+  renderHistorial();
 }
 function pagarTotalCredito(orderId){
   openAbonoModal(orderId);
@@ -2182,6 +2183,15 @@ function changeQty(itemId,d){
 function setNote(itemId,val){const item=editing.items.find(i=>i.itemId===itemId);if(item)item.note=val;}
 function startNote(itemId){editingNoteId=itemId;renderSheet();}
 function confirmNote(itemId){editingNoteId=null;renderSheet();}
+
+function saveOrderFromEditor(sendKitchen){
+  if(!editing||!editing.items.length)return;
+  editing.status=sendKitchen?'sent':'draft';
+  const idx=orders.findIndex(o=>o.id===editing.id);
+  if(idx>=0) orders[idx]=editing; else orders.push(editing);
+  if(editing.tableId) tableStates[editing.tableId]={status:'occupied'};
+  closeCart(); closeEditor(); saveData(); switchTab('pedidos');
+}
 
 // ── CUENTA ────────────────────────────────────────────────────────────────────
 function openBill(orderId){
