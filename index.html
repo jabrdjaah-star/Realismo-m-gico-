@@ -41,7 +41,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#1a3a5c 0
 .header-title{color:#fff;font-weight:700;font-size:1.1rem;margin-left:10px;}
 
 #tabs{display:flex;background:#1a3a5c;overflow-x:auto;position:sticky;top:57px;z-index:49;gap:3px;padding:4px 6px;}
-.tab{flex:0 0 auto;display:flex;align-items:center;justify-content:center;text-align:center;padding:5px 10px;font-size:.62rem;font-weight:800;color:rgba(255,255,255,.65);cursor:pointer;letter-spacing:.4px;position:relative;white-space:nowrap;border-radius:7px;border:none;transition:all .15s;background:transparent;}
+.tab{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;padding:5px 6px;font-size:.62rem;font-weight:800;color:rgba(255,255,255,.65);cursor:pointer;letter-spacing:.4px;position:relative;white-space:nowrap;border-radius:7px;border:none;transition:all .15s;background:transparent;}
 .tab.active{color:#1a3a5c;background:#e8f4fd;border-radius:7px;}
 .tab-badge{position:absolute;top:3px;right:5px;background:#e74c3c;color:#fff;border-radius:50%;width:15px;height:15px;font-size:.58rem;display:flex;align-items:center;justify-content:center;font-weight:800;}
 
@@ -70,10 +70,6 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#1a3a5c 0
 .btn-grey{background:rgba(255,255,255,.15);color:#fff;}
 .btn-blue{background:#2980b9;color:#fff;}
 
-/* mesas */
-.mesas-grid{padding:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;}
-.mesa-card{border-radius:10px;padding:12px 10px;cursor:pointer;transition:all .18s;}
-.mesa-card:active{transform:scale(.96);}
 
 /* empty */
 .empty{text-align:center;padding:4rem 2rem;color:#ccc;}
@@ -115,10 +111,6 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#1a3a5c 0
 .editor-header-info{flex:1;}
 .editor-header-title{color:#fff;font-weight:800;font-size:1rem;}
 .editor-header-sub{color:rgba(255,255,255,.72);font-size:.72rem;}
-.btn-mesa-sel{background:rgba(255,255,255,.2);border:none;border-radius:6px;padding:5px 10px;color:#fff;font-size:.75rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;}
-.mesa-selector{background:#eaf4ff;border-bottom:1px solid #cde;padding:10px;display:flex;flex-wrap:wrap;gap:6px;flex-shrink:0;}
-.mesa-num-btn{border-radius:8px;padding:5px 10px;font-weight:800;cursor:pointer;font-size:.88rem;font-family:'Nunito',sans-serif;}
-.mesa-num-btn:active{transform:scale(.9);}
 .cats-bar{display:flex;gap:5px;padding:7px 8px;overflow-x:auto;background:rgba(0,0,0,.15);border-bottom:1px solid rgba(255,255,255,.1);flex-shrink:0;scrollbar-width:thin;scrollbar-color:#f0c040 transparent;}
 .cat-btn{border:3px solid transparent;border-radius:20px;padding:5px 11px;font-weight:800;font-size:.72rem;cursor:pointer;white-space:nowrap;font-family:'Nunito',sans-serif;transition:all .15s;}
 .cat-btn:active{transform:scale(.93);}
@@ -592,7 +584,6 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#1a3a5c 0
 
 <div id="tabs">
   <div class="tab active" data-tab="pedidos" onclick="switchTab('pedidos')">PEDIDOS <span class="tab-badge" id="badge-pedidos" style="display:none"></span></div>
-  <div class="tab" data-tab="mesas"   onclick="switchTab('mesas')">MESAS</div>
   <div class="tab" data-tab="menu"    onclick="switchTab('menu')">MENÚ</div>
   <div class="tab" data-tab="kitchen" onclick="switchTab('kitchen')">COCINA <span class="tab-badge" id="badge-kitchen" style="display:none"></span></div>
   <div class="tab" data-tab="finanzas" onclick="switchTab('finanzas')">FINANZAS</div>
@@ -610,7 +601,6 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#1a3a5c 0
 
 <div id="content">
   <div id="view-pedidos"  class="view active"></div>
-  <div id="view-mesas"    class="view"></div>
   <div id="view-menu"     class="view"></div>
   <div id="view-kitchen"  class="view"></div>
   <div id="view-historial"class="view"></div>
@@ -1048,7 +1038,6 @@ function playKitchenSound(){
 const REF = {
   orders:       db.ref('rm/orders'),
   counter:      db.ref('rm/counter'),
-  tables:       db.ref('rm/tableStates'),
   prestamistas: db.ref('rm/prestamistas'),
   gastos:       db.ref('rm/gastos'),
   preciosIngr:  db.ref('rm/preciosIngr'),
@@ -1083,7 +1072,6 @@ function saveData(){
   _syncBg(()=>{
     REF.orders.set(orders.length ? Object.fromEntries(orders.map(o=>[String(o.id),o])) : {});
     REF.counter.set(orderCounter);
-    REF.tables.set(tableStates);
     REF.prestamistas.set(prestamistas.length ? Object.fromEntries(prestamistas.map(p=>[String(p.id),p])) : {});
     REF.gastos.set(gastos.length ? Object.fromEntries(gastos.map(g=>[String(g.id),g])) : {});
   });
@@ -1134,8 +1122,6 @@ function loadData(){
     const t = document.querySelector('.tab.active')?.dataset?.tab;
     if(t==='pedidos')   renderPedidos();
     if(t==='kitchen')   renderKitchen();
-    if(t==='mesas')     renderMesas();
-    if(t==='historial') renderHistorial();
     if(t==='costos')    renderCostos();
     updateBadge('pedidos', orders.filter(o=>isActive(o)).length);
     updateBadge('kitchen', orders.filter(o=>o.status==='sent').length);
@@ -1144,12 +1130,6 @@ function loadData(){
   REF.counter.on('value', snap => {
     const val=snap.val();
     if(val!==null) orderCounter=parseInt(val)||0;
-  });
-
-  REF.tables.on('value', snap => {
-    const val=snap.val();
-    if(val) tableStates=val;
-    if(document.querySelector('.tab.active')?.dataset?.tab==='mesas') renderMesas();
   });
 
   REF.prestamistas.on('value', snap => {
@@ -1211,9 +1191,8 @@ function switchTab(t){
     document.querySelectorAll('.more-menu-item').forEach(el=>el.classList.remove('active-tab'));
   }
 
-  document.getElementById('fab').style.display=(t==='pedidos'||t==='mesas')?'flex':'none';
+  document.getElementById('fab').style.display=(t==='pedidos')?'flex':'none';
   if(t==='pedidos')      renderPedidos();
-  if(t==='mesas')        renderMesas();
   if(t==='menu')         renderMenuTab();
   if(t==='kitchen')      renderKitchen();
   if(t==='historial')    renderHistorial();
@@ -1290,30 +1269,7 @@ function updateBadge(tab,n){
   b.textContent=n; b.style.display=n>0?'flex':'none';
 }
 
-// ── RENDER MESAS ──────────────────────────────────────────────────────────────
-function renderMesas(){
-  const C={free:{bg:'#f7f7f7',border:'#ddd',dot:'#ccc',label:'Libre'},occupied:{bg:'#fff5f5',border:'#e74c3c',dot:'#e74c3c',label:'Ocupada'},ready:{bg:'#fffbea',border:'#f39c12',dot:'#f39c12',label:'Lista ✓'},credito:{bg:'#fdf0ff',border:'#8e44ad',dot:'#8e44ad',label:'Crédito'}};
-  const free=TABLES.filter(t=>tableStates[t.id]?.status==='free').length;
-  const cards=TABLES.map(t=>{
-    const ts=tableStates[t.id]||{status:'free'};
-    const c=C[ts.status]||C.free;
-    const o=orders.find(x=>x.tableId===t.id&&x.status!=='paid');
-    const action=(ts.status==='ready'||ts.status==='occupied'||ts.status==='credito')?`openBillByTable(${t.id})`:`openTableOrder(${t.id})`;
-    return `<div class="mesa-card" onclick="${action}" style="background:${c.bg};border:2px solid ${c.border}">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <span style="font-family:'Bebas Neue';font-size:2.4rem;color:#222;line-height:1">${t.number}</span>
-        <span style="width:9px;height:9px;border-radius:50%;background:${c.dot};margin-top:5px;display:block;${ts.status==='ready'?'animation:blink 1s infinite':''}"></span>
-      </div>
-      <div style="font-size:.68rem;color:#aaa;margin-bottom:4px">${t.seats} personas</div>
-      <div style="font-size:.72rem;font-weight:700;color:${ts.status==='free'?'#bbb':c.dot}">${c.label}</div>
-      ${o?`<div style="margin-top:5px;font-weight:800;font-size:.82rem;color:#333">${fmt(totalOf(o))}</div>`:''}
-    </div>`;
-  }).join('');
-  document.getElementById('view-mesas').innerHTML=`<div style="padding:12px">
-    <div style="font-size:.72rem;color:#aaa;margin-bottom:10px">${free} libres · ${TABLES.length-free} ocupadas</div>
-    <div class="mesas-grid">${cards}</div>
-  </div>`;
-}
+
 
 function openTableOrder(tid){const ex=orders.find(o=>o.tableId===tid&&isActive(o));if(ex)openOrderEditor(ex.id);else newOrder(tid);}
 function openBillByTable(tid){const o=orders.find(x=>x.tableId===tid&&x.status!=='paid'&&x.status!=='credito');if(o)openBill(o.id);}
@@ -1323,12 +1279,18 @@ let menuActiveCat='hamburguesas';
 function renderMenuTab(){
   const view=document.getElementById('view-menu');
   const cat=MENU.find(c=>c.id===menuActiveCat);
-  const catBtns=MENU.map(c=>`<button class="cat-btn" onclick="setMenuCat('${c.id}')" style="background:${menuActiveCat===c.id?'#e74c3c':'#eee'};color:${menuActiveCat===c.id?'#fff':'#555'}">${c.icon} ${c.name}</button>`).join('');
-  const items=cat.items.map(item=>`<div class="menu-item-row"><div><div class="menu-item-name">${item.name}</div>${item.desc?`<div class="menu-item-desc">${item.desc}</div>`:''}</div><div class="menu-item-price">${fmt(item.price)}</div></div>`).join('');
-  view.innerHTML=`<div class="menu-view">
-    <div style="display:flex;gap:6px;padding:10px 12px;overflow-x:auto;background:#f9f9f9;border-bottom:1px solid #eee;flex-shrink:0">${catBtns}</div>
-    ${cat.note?`<div style="padding:5px 14px;background:#fff9e6;font-size:.72rem;color:#e67e00;font-weight:700;border-bottom:1px solid #f5e6c0;flex-shrink:0">⚡ ${cat.note}</div>`:''}
-    <div class="menu-items-list">${items}</div>
+  const catBtns=MENU.map(c=>`<button class="cat-btn" onclick="setMenuCat('${c.id}')" style="background:${menuActiveCat===c.id?'#e74c3c':'#f0c040'};color:${menuActiveCat===c.id?'#fff':'#111'};border:3px solid ${menuActiveCat===c.id?'#5c1a1a':'#c89a00'}">${c.icon} ${c.name}</button>`).join('');
+  const tiles=cat.items.map(item=>`
+    <div class="item-tile">
+      <div class="item-tile-icon">${item.icon||cat.icon}</div>
+      <div class="item-tile-name">${item.name}</div>
+      ${item.desc?`<div class="item-tile-desc">${item.desc}</div>`:''}
+      <div class="item-tile-price">${fmt(item.price)}</div>
+    </div>`).join('');
+  view.innerHTML=`<div style="display:flex;flex-direction:column;height:100%;background:linear-gradient(160deg,#1e5799 0%,#2980b9 100%)">
+    <div class="cats-bar" style="scrollbar-width:thin;scrollbar-color:#f0c040 transparent">${catBtns}</div>
+    ${cat.note?`<div class="cat-note-bar" style="display:block;padding:6px 14px;background:linear-gradient(90deg,#b8860b,#f0c040);font-size:.72rem;color:#1a1a00;font-weight:900;letter-spacing:.3px">⚡ ${cat.note}</div>`:''}
+    <div class="items-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:9px;padding:10px;overflow-y:auto">${tiles}</div>
   </div>`;
 }
 function setMenuCat(id){menuActiveCat=id;renderMenuTab();}
@@ -1373,7 +1335,7 @@ function renderKitchen(){
     ${ready.length?`<div class="sec-label" style="color:#f39c12">🟡 Listas para servir (${ready.length})</div><div class="kitchen-grid">${ready.map(o=>cardHTML(o,true)).join('')}</div>`:''}
   </div>`;
 }
-function markReady(id){const o=orders.find(x=>String(x.id)===String(id));if(!o)return;o.status='ready';if(o.tableId)tableStates[o.tableId]={status:'ready'};saveData();renderKitchen();renderMesas();}
+function markReady(id){const o=orders.find(x=>String(x.id)===String(id));if(!o)return;o.status='ready';if(o.tableId)tableStates[o.tableId]={status:'ready'};saveData();renderKitchen();}
 
 // ── RENDER HISTORIAL ──────────────────────────────────────────────────────────
 let histSubTab='efectivo';
@@ -1697,10 +1659,10 @@ function confirmCancelOrder(){
   _markDirty(cancelOrderId);
   orders=orders.filter(x=>x.id!==cancelOrderId);
   closeCancelModal();
-  renderPedidos(); renderMesas();
+  renderPedidos();
   updateBadge('pedidos',orders.filter(o=>isActive(o)).length);
   updateBadge('kitchen',orders.filter(o=>o.status==='sent').length);
-  _syncBg(()=>{ REF.orders.child(String(cancelOrderId)).remove().then(()=>_clearDirty(cancelOrderId)).catch(e=>console.warn(e)); REF.tables.set(tableStates); });
+  _syncBg(()=>{ REF.orders.child(String(cancelOrderId)).remove().then(()=>_clearDirty(cancelOrderId)).catch(e=>console.warn(e)); });
 }
 
 // ── ABONOS A CRÉDITO ─────────────────────────────────────────────────────────
@@ -2328,9 +2290,9 @@ function finalizePago(method, deudorName){
   if(o.tableId) tableStates[o.tableId]={status:'free'};
   closeBill();
   // Optimista: renderiza primero, guarda en segundo plano
-  renderPedidos(); renderMesas();
+  renderPedidos();
   saveOrder(o);
-  _syncBg(()=>{ REF.tables.set(tableStates); REF.counter.set(orderCounter); });
+  _syncBg(()=>{ REF.counter.set(orderCounter); });
 }
 
 // ── PAGO MIXTO ────────────────────────────────────────────────────────────────
@@ -2345,9 +2307,9 @@ function finalizePagoMixto(met1, monto1, met2, monto2, deudorName){
   if(o.tableId) tableStates[o.tableId]={status:'free'};
   closeBill();
   // Optimista: renderiza primero, guarda en segundo plano
-  renderPedidos(); renderMesas();
+  renderPedidos();
   saveOrder(o);
-  _syncBg(()=>{ REF.tables.set(tableStates); REF.counter.set(orderCounter); });
+  _syncBg(()=>{ REF.counter.set(orderCounter); });
 }
 
 // ── FINANZAS ──────────────────────────────────────────────────────────────────
