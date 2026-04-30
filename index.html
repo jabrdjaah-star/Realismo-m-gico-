@@ -1739,7 +1739,7 @@ function confirmAbono(){
   if(!amount||amount<=0){document.getElementById('abono-amount-input').focus();return;}
   const o=orders.find(x=>String(x.id)===String(abonoOrderId));
   if(!o){
-    alert('⚠️ No se encontró el pedido. ID: '+abonoOrderId);
+    alert('⚠️ No se encontró el pedido.\nBuscando ID: '+abonoOrderId+'\nIDs disponibles: '+orders.map(x=>x.id).join(', '));
     return;
   }
   if(!o.abonos) o.abonos=[];
@@ -3006,6 +3006,8 @@ function openPAbonoModal(id){
   });
   document.getElementById('prest-abono-modal').style.display='flex';
   setTimeout(()=>document.getElementById('pabono-amount-input').focus(),100);
+  // Preseleccionar efectivo por defecto
+  selPAbonoMet('efectivo');
 }
 function closePAbonoModal(){
   document.getElementById('prest-abono-modal').style.display='none';
@@ -3021,7 +3023,7 @@ function selPAbonoMet(m){
 function confirmarPAbono(){
   const monto=parseFloat(document.getElementById('pabono-amount-input').value)||0;
   if(monto<=0){document.getElementById('pabono-amount-input').focus();return;}
-  if(!pAbonoMet){alert('Selecciona un método de pago');return;}
+  if(!pAbonoMet){pAbonoMet='efectivo';}
   const p=prestamistas.find(x=>x.id===pAbonoTarget);
   if(!p)return;
   const saldo=saldoPendiente(p);
