@@ -336,13 +336,13 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#1a3a5c 0
 .costo-stat-lbl{font-size:.65rem;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.8px;margin-top:2px;}
 .ingr-costo-card{background:linear-gradient(135deg,#1e3a5c,#2c5f8a);border-radius:10px;margin-bottom:8px;padding:12px 14px;box-shadow:0 2px 8px rgba(0,0,0,.2);}
 .ingr-costo-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
-.ingr-costo-name{font-weight:800;font-size:.88rem;color:#222;}
+.ingr-costo-name{font-weight:800;font-size:.88rem;color:#f0c040;}
 .ingr-costo-total{font-family:'Bebas Neue';font-size:1.1rem;color:#e74c3c;letter-spacing:1px;}
 .ingr-costo-bar-wrap{background:#f0f0f0;border-radius:4px;height:5px;overflow:hidden;}
 .ingr-costo-bar{height:5px;border-radius:4px;background:linear-gradient(90deg,#e74c3c,#e67e22);transition:width .4s;}
-.ingr-costo-sub{display:flex;justify-content:space-between;margin-top:5px;font-size:.7rem;color:#aaa;}
+.ingr-costo-sub{display:flex;justify-content:space-between;margin-top:5px;font-size:.7rem;color:rgba(255,255,255,.6);}
 .plato-costo-row{background:linear-gradient(135deg,#1e3a5c,#2c5f8a);border-radius:10px;margin-bottom:6px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,.05);}
-.plato-costo-name{font-weight:700;font-size:.86rem;color:#222;}
+.plato-costo-name{font-weight:700;font-size:.86rem;color:#f0c040;}
 .plato-costo-meta{font-size:.68rem;color:#aaa;margin-top:2px;}
 .plato-costo-val{font-family:'Bebas Neue';font-size:1rem;color:#e74c3c;letter-spacing:1px;}
 .costos-section-title{font-size:.72rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#aaa;margin:14px 0 8px;}
@@ -389,8 +389,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#1a3a5c 0
 .prest-card{background:linear-gradient(135deg,#1e3a5c,#2c5f8a);border-radius:10px;margin-bottom:10px;overflow:hidden;box-shadow:0 2px 8px rgba(231,76,60,.1);border-left:4px solid #e74c3c;}
 .prest-card.saldado{border-left-color:#27ae60;opacity:.7;}
 .prest-header{padding:12px 14px 8px;cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;}
-.prest-nombre{font-weight:800;font-size:1rem;color:#222;}
-.prest-meta{font-size:.7rem;color:#aaa;margin-top:2px;}
+.prest-nombre{font-weight:800;font-size:1rem;color:#f0c040;}
+.prest-meta{font-size:.7rem;color:rgba(255,255,255,.6);margin-top:2px;}
 .prest-deuda-col{text-align:right;}
 .prest-deuda-original{font-size:.68rem;color:#aaa;text-decoration:line-through;}
 .prest-deuda-pendiente{font-family:'Bebas Neue';font-size:1.3rem;letter-spacing:1px;}
@@ -591,7 +591,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#1a3a5c 0
 </div>
 
 <!-- Menú desplegable para tabs secundarias -->
-<div id="more-menu" style="display:none;position:fixed;top:107px;right:0;background:linear-gradient(160deg,#1a3a5c,#2471a3);border-radius:12px 0 0 12px;box-shadow:-4px 4px 20px rgba(0,0,0,.15);z-index:200;overflow:hidden;min-width:160px;">
+<div id="more-menu" style="display:none;position:fixed;top:107px;right:0;background:linear-gradient(160deg,#0d2540,#1a3a5c);border-radius:12px 0 0 12px;box-shadow:-4px 4px 20px rgba(0,0,0,.15);z-index:200;overflow:hidden;min-width:160px;">
   <div class="more-menu-item" onclick="switchTab('historial');closeMoreMenu()" data-tab="historial">📋 Historial</div>
   <div class="more-menu-item" onclick="switchTab('costos');closeMoreMenu()" data-tab="costos">💰 Costos</div>
   <div class="more-menu-item" onclick="switchTab('prestamistas');closeMoreMenu()" data-tab="prestamistas">💳 Deudas</div>
@@ -826,6 +826,21 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#1a3a5c 0
     <button class="btn-mesa-sel" id="btn-mesa-sel" onclick="toggleTableSelector()">🪑 Sin mesa</button>
   </div>
   <div class="mesa-selector" id="mesa-selector" style="display:none"></div>
+  <!-- Nombre + tipo de pedido -->
+  <div id="order-info-bar" style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(0,0,0,.2);border-bottom:1px solid rgba(255,255,255,.1);flex-shrink:0">
+    <input id="order-nombre-input" type="text" placeholder="Nombre del cliente (opcional)" maxlength="40"
+      oninput="editing.nombreCliente=this.value;updateEditorTitle()"
+      style="flex:1;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);border-radius:8px;padding:7px 10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:.82rem;color:#fff;outline:none;"
+    />
+    <button id="tipo-aqui" onclick="setTipoPedido('aqui')"
+      style="padding:7px 10px;border-radius:8px;border:2px solid rgba(255,255,255,.25);font-size:.72rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;background:rgba(255,255,255,.12);color:#fff;white-space:nowrap;transition:all .15s">
+      🍽️ Aquí
+    </button>
+    <button id="tipo-llevar" onclick="setTipoPedido('llevar')"
+      style="padding:7px 10px;border-radius:8px;border:2px solid rgba(255,255,255,.25);font-size:.72rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;background:rgba(255,255,255,.12);color:#fff;white-space:nowrap;transition:all .15s">
+      🥡 Llevar
+    </button>
+  </div>
   <div class="cats-bar"    id="cats-bar"></div>
   <div class="cat-note-bar" id="cat-note-bar"></div>
   <div class="items-grid"  id="items-grid"></div>
@@ -1743,6 +1758,11 @@ function openOrderEditor(id){
 function openEditor(){
   document.getElementById('editor').classList.add('open');
   document.getElementById('fab').style.display='none';
+  // Init nombre input and tipo buttons
+  const ni=document.getElementById('order-nombre-input');
+  if(ni) ni.value=editing.nombreCliente||'';
+  setTipoPedido(editing.tipoPedido||null);
+  updateEditorTitle();
   renderEditor();
   renderSheetActions();
 }
@@ -1897,6 +1917,22 @@ function renderEditor(){
   else fab.style.display='none';
 }
 
+function setTipoPedido(tipo){
+  editing.tipoPedido=tipo;
+  const aqui=document.getElementById('tipo-aqui');
+  const llevar=document.getElementById('tipo-llevar');
+  if(aqui&&llevar){
+    aqui.style.background=tipo==='aqui'?'#27ae60':'rgba(255,255,255,.12)';
+    aqui.style.borderColor=tipo==='aqui'?'#1a5c2e':'rgba(255,255,255,.25)';
+    llevar.style.background=tipo==='llevar'?'#e67e22':'rgba(255,255,255,.12)';
+    llevar.style.borderColor=tipo==='llevar'?'#5c3a1a':'rgba(255,255,255,.25)';
+  }
+}
+function updateEditorTitle(){
+  const nombre=editing.nombreCliente||'';
+  const base=editing.id&&orders.find(x=>String(x.id)===String(editing.id))?'Pedido':'Nuevo pedido';
+  document.getElementById('editor-title').textContent=nombre?nombre:base;
+}
 function setCat(id){activeCat=id;renderEditor(); const tv=document.getElementById('editor-total-val'); if(tv) tv.textContent=fmt(totalOf(editing));}
 
 function changeQtyTab(itemId, delta){
@@ -2810,7 +2846,7 @@ function renderCostos(){
         <div class="ingr-costo-sub"><span>Consumido: ${qty}</span><span>${pct}% del costo</span></div>
       </div>`;
     }).join('');
-    el.innerHTML=`<div class="costos-wrap">${statsHTML}${periodoHTML}${subTabsHTML}${alertHTML}<div class="costos-section-title">🧂 Costo por ingrediente</div><div style="background:#fff;border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 5px rgba(0,0,0,.06);border-left:4px solid #e74c3c;"><span style="font-weight:800;font-size:.88rem;color:#555">🧂 Total ingredientes</span><span style="font-family:'Bebas Neue';font-size:1.3rem;color:#e74c3c;letter-spacing:1px">${fmt(Math.round(totalCostoIngr))}</span></div>${ingrsHTML||'<div style="text-align:center;color:#ccc;padding:1rem">Sin datos</div>'}</div>`;
+    el.innerHTML=`<div class="costos-wrap">${statsHTML}${periodoHTML}${subTabsHTML}${alertHTML}<div class="costos-section-title">🧂 Costo por ingrediente</div><div style="background:#fff;border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 5px rgba(0,0,0,.06);border-left:4px solid #e74c3c;"><span style="font-weight:800;font-size:.88rem;color:#fff">🧂 Total ingredientes</span><span style="font-family:'Bebas Neue';font-size:1.3rem;color:#e74c3c;letter-spacing:1px">${fmt(Math.round(totalCostoIngr))}</span></div>${ingrsHTML||'<div style="text-align:center;color:#ccc;padding:1rem">Sin datos</div>'}</div>`;
 
   } else {
     const platoMap={};
