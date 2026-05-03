@@ -203,10 +203,10 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#1a3a5c 0
 .kitchen-card-title{font-family:'Bebas Neue';font-size:1.15rem;letter-spacing:2px;color:#fff;}
 .kitchen-card.ready .kitchen-card-title{color:#f39c12;}
 .kitchen-card-time{font-size:.68rem;color:rgba(255,255,255,.8);align-self:center;}
-.kitchen-card-body{padding:10px 12px;}
-.kitchen-item-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f5f5f5;font-size:.85rem;color:#333;}
+.kitchen-card-body{padding:10px 12px;background:rgba(0,0,0,.1);}
+.kitchen-item-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:.85rem;color:#f0c040;}
 .kitchen-item-note{font-size:.72rem;color:#e67e00;margin-top:1px;}
-.kitchen-card.ready .kitchen-item-row{color:#aaa;}
+.kitchen-card.ready .kitchen-item-row{color:rgba(240,192,64,.4);}
 .btn-ready{width:100%;margin-top:10px;background:#27ae60;border:none;border-radius:6px;padding:8px;color:#fff;font-weight:800;font-size:.85rem;cursor:pointer;font-family:'Nunito',sans-serif;}
 .btn-ready:active{transform:scale(.96);}
 .kitchen-card.modificado{border-color:#e67e00;animation:parpadeo .8s ease 3;}
@@ -1168,6 +1168,7 @@ function loadData(){
 // ── UTILS ─────────────────────────────────────────────────────────────────────
 const fmt     = n => `$${n.toLocaleString("es-CO")}`;
 const elapsed = ts => { const s=Math.floor((Date.now()-ts)/1000),m=Math.floor(s/60); return `${m}:${(s%60).toString().padStart(2,"0")}`; };
+const fmtHora = ts => { const d=new Date(ts); return d.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit',hour12:false}); };
 const timeAgo = ts => { const s=Math.floor((Date.now()-ts)/1000); if(s<60)return "hace menos de un min"; const m=Math.floor(s/60); if(m<60)return `hace ${m} min`; return `hace ${Math.floor(m/60)}h ${m%60}min`; };
 const totalOf = o => o ? o.items.reduce((s,i)=>s+i.price*i.qty,0) : 0;
 const payLabel= m => ({efectivo:'💵 Efectivo',nequi:'📱 Nequi',credito:'📋 A crédito'}[m]||'');
@@ -1253,11 +1254,11 @@ function orderCardHTML(o){
     <div class="order-card-top" onclick="openOrderEditor(${o.id})">
       <div style="flex:1">
         <div style="display:flex;align-items:center;gap:4px;margin-bottom:2px;flex-wrap:wrap">
-          <span class="order-card-title">${o.nombreCliente||'Pedido '+elapsed(o.createdAt)}</span>
+          <span class="order-card-title">${o.nombreCliente||'Pedido '+elapsed(o.createdAt)}${o.tipoPedido==='llevar'?' · Llevar':o.tipoPedido==='aqui'?' · Aquí':''}</span>
           <span class="chip" style="background:${col}1a;color:${col}">${lbl}</span>
           ${urgenciaHTML}
         </div>
-        <div class="order-card-sub">${timeAgo(o.createdAt)}</div>
+        <div class="order-card-sub">${fmtHora(o.createdAt)} · ${timeAgo(o.createdAt)}</div>
         ${o.tableId?`<div class="order-card-sub">Mesa ${o.tableId}</div>`:''}
       </div>
       <span style="color:#ccc;font-size:1.3rem">⋮</span>
@@ -1334,7 +1335,7 @@ function renderKitchen(){
       </div>`:'' ;
     return `<div class="kitchen-card${isReady?' ready':''}${modificado?' modificado':''}">
       <div class="kitchen-card-header" style="${modificado?'background:#e67e00':''}" >
-        <span class="kitchen-card-title">${o.nombreCliente||(o.tableId?`Mesa ${o.tableId}`:`Pedido #${o.number}`)}</span>
+        <span class="kitchen-card-title">${o.nombreCliente||(o.tableId?`Mesa ${o.tableId}`:`Pedido #${o.number}`)}${o.tipoPedido==='llevar'?' · Llevar':o.tipoPedido==='aqui'?' · Aquí':''}</span>
         <span class="kitchen-card-time">${elapsed(o.createdAt)}${modificado?' 🔄':''}</span>
       </div>
       <div class="kitchen-card-body">
@@ -1854,10 +1855,12 @@ function detectarCambios(prev, curr){
 }
 
 function renderEditor(){
-  document.getElementById('editor-title').textContent='Nuevo pedido'+(editing.tableId?` · Mesa ${editing.tableId}`:'');
+  const _nombre=editing.nombreCliente||(document.getElementById('order-nombre-input')?.value.trim()||'');
+  document.getElementById('editor-title').textContent=_nombre||('Nuevo pedido'+(editing.tableId?` · Mesa ${editing.tableId}`:''));
   const qty=editing.items.reduce((s,i)=>s+i.qty,0);
   const tot=totalOf(editing);
-  document.getElementById('editor-sub').textContent=qty>0?`${qty} ítems · ${fmt(tot)}`:'Agrega ítems del menú';
+  const tipoLabel=editing.tipoPedido==='aqui'?' · Aquí':editing.tipoPedido==='llevar'?' · Llevar':'';
+  document.getElementById('editor-sub').textContent=qty>0?`${qty} ítem(s) · ${fmt(tot)}${tipoLabel}`:'Agrega ítems del menú';
   document.getElementById('btn-mesa-sel').textContent='🪑 '+(editing.tableId?`Mesa ${editing.tableId}`:'Sin mesa');
   const cat=MENU.find(c=>c.id===activeCat);
   const qty_badge = editing.items.reduce((s,i)=>s+i.qty,0);
@@ -1885,11 +1888,11 @@ function renderEditor(){
         <div class="sheet-item-row">
           <div class="qty-controls">
             <button class="qty-btn minus" onclick="changeQty(${item.itemId},-1)">−</button>
-            <span class="qty-num">${item.qty}</span>
+            <span class="qty-num" id="qty-${item.itemId}">${item.qty}</span>
             <button class="qty-btn plus"  onclick="changeQty(${item.itemId},1)">+</button>
           </div>
           <span class="sheet-item-name">${item.name}</span>
-          <span class="sheet-item-price">${fmt(item.price*item.qty)}</span>
+          <span class="sheet-item-price" id="price-${item.itemId}">${fmt(item.price*item.qty)}</span>
         </div>
         <div style="display:flex;align-items:center;gap:6px;margin-top:5px;">
           <button onclick="openItemCustomModal(${item.itemId})" style="background:${isCustom?'rgba(231,76,60,.3)':'rgba(255,255,255,.12)'};border:1.5px solid ${isCustom?'#e74c3c':'rgba(255,255,255,.25)'};border-radius:7px;padding:4px 10px;font-size:.72rem;font-weight:800;cursor:pointer;color:${isCustom?'#ff8888':'#f0c040'};font-family:'Nunito',sans-serif;">
@@ -2184,9 +2187,27 @@ function renderSheet(){
 function changeQty(itemId,d){
   const item=editing.items.find(i=>i.itemId===itemId); if(!item)return;
   item.qty+=d;
-  if(item.qty<=0) editing.items=editing.items.filter(i=>i.itemId!==itemId);
-  renderSheet(); renderEditor();
-  if(!editing.items.length) closeCart();
+  if(item.qty<=0){
+    editing.items=editing.items.filter(i=>i.itemId!==itemId);
+    renderEditor(); // full re-render when item removed
+  } else {
+    // Instant DOM update — no full re-render
+    const qtyEl=document.getElementById('qty-'+itemId);
+    const priceEl=document.getElementById('price-'+itemId);
+    if(qtyEl) qtyEl.textContent=item.qty;
+    if(priceEl) priceEl.textContent=fmt(item.price*item.qty);
+    // Update header totals
+    const qty=editing.items.reduce((s,i)=>s+i.qty,0);
+    const tot=totalOf(editing);
+    const tipoLabel=editing.tipoPedido==='aqui'?' · Aquí':editing.tipoPedido==='llevar'?' · Llevar':'';
+    const sub=document.getElementById('editor-sub');
+    if(sub) sub.textContent=`${qty} ítem(s) · ${fmt(tot)}${tipoLabel}`;
+    const tv=document.getElementById('editor-total-val');
+    if(tv) tv.textContent=fmt(tot);
+    // Update badge on Pedido tab
+    const badge=document.querySelector('#cats-bar .cat-btn span');
+    if(badge) badge.textContent=qty;
+  }
 }
 function setNote(itemId,val){const item=editing.items.find(i=>i.itemId===itemId);if(item)item.note=val;}
 function startNote(itemId){editingNoteId=itemId;renderSheet();}
