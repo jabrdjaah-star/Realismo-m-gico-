@@ -829,7 +829,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#1a3a5c 0
   <!-- Nombre + tipo de pedido -->
   <div id="order-info-bar" style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(0,0,0,.2);border-bottom:1px solid rgba(255,255,255,.1);flex-shrink:0">
     <input id="order-nombre-input" type="text" placeholder="Nombre del cliente (opcional)" maxlength="40"
-      oninput="editing.nombreCliente=this.value;updateEditorTitle()"
+      oninput="editing.nombreCliente=this.value;updateEditorTitle()" onblur="editing.nombreCliente=this.value.trim()"
       style="flex:1;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);border-radius:8px;padding:7px 10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:.82rem;color:#fff;outline:none;"
     />
     <button id="tipo-aqui" onclick="setTipoPedido('aqui')"
@@ -1253,7 +1253,7 @@ function orderCardHTML(o){
     <div class="order-card-top" onclick="openOrderEditor(${o.id})">
       <div style="flex:1">
         <div style="display:flex;align-items:center;gap:4px;margin-bottom:2px;flex-wrap:wrap">
-          <span class="order-card-title">Pedido ${elapsed(o.createdAt)}</span>
+          <span class="order-card-title">${o.nombreCliente||'Pedido '+elapsed(o.createdAt)}</span>
           <span class="chip" style="background:${col}1a;color:${col}">${lbl}</span>
           ${urgenciaHTML}
         </div>
@@ -1334,7 +1334,7 @@ function renderKitchen(){
       </div>`:'' ;
     return `<div class="kitchen-card${isReady?' ready':''}${modificado?' modificado':''}">
       <div class="kitchen-card-header" style="${modificado?'background:#e67e00':''}" >
-        <span class="kitchen-card-title">${o.tableId?`Mesa ${o.tableId}`:`Pedido #${o.number}`}</span>
+        <span class="kitchen-card-title">${o.nombreCliente||(o.tableId?`Mesa ${o.tableId}`:`Pedido #${o.number}`)}</span>
         <span class="kitchen-card-time">${elapsed(o.createdAt)}${modificado?' 🔄':''}</span>
       </div>
       <div class="kitchen-card-body">
@@ -1740,7 +1740,7 @@ function pagarTotalCredito(orderId){
 
 function newOrder(tableId){
   orderCounter++;
-  editing={id:Date.now(),number:orderCounter,tableId,items:[],status:'draft',createdAt:Date.now()};
+  editing={id:Date.now(),number:orderCounter,tableId,items:[],status:'draft',createdAt:Date.now(),nombreCliente:'',tipoPedido:null};
   _prevItems=null;
   activeCat='hamburguesas'; editingNoteId=null;
   openEditor();
@@ -1792,6 +1792,10 @@ function renderSheetActions(){
 
 function saveOrderFromEditor(sendKitchen){
   if(!editing||!editing.items.length)return;
+  // Leer nombre e info del DOM justo antes de guardar
+  const ni=document.getElementById('order-nombre-input');
+  if(ni) editing.nombreCliente=ni.value.trim()||'';
+  // tipoPedido ya está en editing desde setTipoPedido()
 
   const eraEnCocina=editing.status==='sent'||editing.status==='ready';
 
@@ -1814,9 +1818,15 @@ function saveOrderFromEditor(sendKitchen){
   }
 
   const idx=orders.findIndex(o=>o.id===editing.id);
-  if(idx>=0) orders[idx]=editing; else orders.push(editing);
+  const savedOrder=JSON.parse(JSON.stringify(editing)); // snapshot with nombreCliente
+  if(idx>=0) orders[idx]=savedOrder; else orders.push(savedOrder);
   if(editing.tableId) tableStates[editing.tableId]={status:'occupied'};
-  closeCart(); closeEditor(); saveData(); switchTab('pedidos');
+  _markDirty(savedOrder.id); // prevent Firebase listener from overwriting with stale data
+  closeCart(); closeEditor();
+  // Sync to Firebase individually (preserves nombreCliente)
+  saveOrder(savedOrder);
+  _syncBg(()=>{ REF.counter.set(orderCounter); });
+  switchTab('pedidos');
 }
 
 // Compara ítems anteriores y nuevos — devuelve lista de cambios legibles
@@ -2181,15 +2191,6 @@ function changeQty(itemId,d){
 function setNote(itemId,val){const item=editing.items.find(i=>i.itemId===itemId);if(item)item.note=val;}
 function startNote(itemId){editingNoteId=itemId;renderSheet();}
 function confirmNote(itemId){editingNoteId=null;renderSheet();}
-
-function saveOrderFromEditor(sendKitchen){
-  if(!editing||!editing.items.length)return;
-  editing.status=sendKitchen?'sent':'draft';
-  const idx=orders.findIndex(o=>o.id===editing.id);
-  if(idx>=0) orders[idx]=editing; else orders.push(editing);
-  if(editing.tableId) tableStates[editing.tableId]={status:'occupied'};
-  closeCart(); closeEditor(); saveData(); switchTab('pedidos');
-}
 
 // ── CUENTA ────────────────────────────────────────────────────────────────────
 function openBill(orderId){
