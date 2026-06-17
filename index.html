@@ -3449,8 +3449,8 @@ function exportarHistorialPDF(){
   const _mixto2=paid.filter(o=>o.payMethod==='mixto'&&o.pagos);
   const totalEfectivo = paid.filter(o=>isClosed(o)&&o.payMethod==='efectivo').reduce((s,o)=>s+totalOf(o),0)
     + _mixto2.flatMap(o=>o.pagos.filter(p=>p.method==='efectivo')).reduce((s,p)=>s+p.amount,0);
-  const totalNequi    = paid.filter(o=>isClosed(o)&&o.payMethod==='nequi').reduce((s,o)=>s+totalOf(o),0)
-    e((s,p)=>s+p.amount,0);
+  const totalNequi    = paid.filter(o=>isClosed(o)&&(o.payMethod==='nequi'||o.payMethod==='nequi-cindy'||o.payMethod==='nequi-jose')).reduce((s,o)=>s+totalOf(o),0)
+    + _mixto2.flatMap(o=>o.pagos.filter(p=>p.method==='nequi'||p.method==='nequi-cindy'||p.method==='nequi-jose')).reduce((s,p)=>s+p.amount,0);
   const totalGeneral  = paid.filter(o=>isClosed(o)).reduce((s,o)=>s+totalOf(o),0);
   const creditOrders  = orders.filter(o=>o.status==='credito'||o.status==='mixto-credito');
   const totalPendiente= creditOrders.reduce((s,o)=>s+((o.payMethod==='mixto'&&o.pagos)?(o.pagos.find(p=>p.method==='credito')?.amount||totalOf(o)):totalOf(o)),0)
