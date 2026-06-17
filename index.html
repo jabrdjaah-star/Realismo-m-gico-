@@ -437,15 +437,11 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#1a3a5c 0
 .btn-login{width:100%;background:#2980b9;border:none;border-radius:10px;padding:14px;color:#fff;font-weight:800;font-size:1rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s;letter-spacing:.5px;}
 .btn-login:active{transform:scale(.97);background:#1a6fa3;}
 .login-footer{margin-top:20px;font-size:.7rem;color:rgba(255,255,255,.35);text-align:center;letter-spacing:.5px;}
-
-/* ── BOTONES DE ROL ── */
 .role-btn{width:100%;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.2);border-radius:14px;padding:16px 18px;margin-bottom:10px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .18s;text-align:left;}
 .role-btn:active{transform:scale(.97);background:rgba(255,255,255,.18);}
 .role-btn-icon{font-size:1.8rem;flex-shrink:0;}
 .role-btn-title{font-weight:800;font-size:1rem;color:#fff;}
 .role-btn-sub{font-size:.72rem;color:rgba(255,255,255,.6);margin-top:2px;}
-
-/* ── BADGE ROL en header ── */
 .role-badge{font-size:.62rem;font-weight:800;padding:2px 8px;border-radius:10px;letter-spacing:.5px;}
 
 /* ── MODAL PERSONALIZACIÓN ÍTEM ── */
@@ -566,56 +562,47 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#1a3a5c 0
 <!-- ── PANTALLA DE ROL ── -->
 <div id="login-screen">
   <div class="login-logo">Realismo Mágico</div>
-  <div class="login-sub">Gastro-Bar · Sucre, Colombia</div>
+  <div class="login-sub">Gastro-Bar &middot; Sucre, Colombia</div>
 
-  <!-- Selector de rol -->
   <div id="role-selector" style="width:100%;max-width:360px">
-    <div style="font-size:.75rem;font-weight:800;color:rgba(255,255,255,.55);letter-spacing:1.5px;text-transform:uppercase;text-align:center;margin-bottom:16px;">¿Cómo vas a ingresar?</div>
+    <div style="font-size:.75rem;font-weight:800;color:rgba(255,255,255,.55);letter-spacing:1.5px;text-transform:uppercase;text-align:center;margin-bottom:16px;">Seleccionar perfil</div>
     <button class="role-btn" onclick="showRoleForm('empleado')">
-      <span class="role-btn-icon">👤</span>
-      <div>
-        <div class="role-btn-title">Empleado</div>
-        <div class="role-btn-sub">Pedidos, menú y cocina</div>
-      </div>
-      <span style="color:rgba(255,255,255,.4);font-size:1.1rem">›</span>
+      <span class="role-btn-icon">&#x1F464;</span>
+      <div><div class="role-btn-title">Empleado</div><div class="role-btn-sub">Pedidos, menu y cocina</div></div>
+      <span style="color:rgba(255,255,255,.4);font-size:1.1rem;margin-left:auto">&#x203A;</span>
     </button>
     <button class="role-btn" onclick="showRoleForm('admin')">
-      <span class="role-btn-icon">🔑</span>
-      <div>
-        <div class="role-btn-title">Administrador</div>
-        <div class="role-btn-sub">Acceso completo</div>
-      </div>
-      <span style="color:rgba(255,255,255,.4);font-size:1.1rem">›</span>
+      <span class="role-btn-icon">&#x1F511;</span>
+      <div><div class="role-btn-title">Administrador</div><div class="role-btn-sub">Acceso completo</div></div>
+      <span style="color:rgba(255,255,255,.4);font-size:1.1rem;margin-left:auto">&#x203A;</span>
     </button>
   </div>
 
-  <!-- Formulario Admin -->
   <div id="form-admin" style="display:none;width:100%;max-width:360px">
-    <button onclick="showRoleSelector()" style="background:none;border:none;color:rgba(255,255,255,.6);font-size:.82rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:16px;display:flex;align-items:center;gap:5px;">‹ Volver</button>
+    <button onclick="showRoleSelector()" style="background:none;border:none;color:rgba(255,255,255,.6);font-size:.82rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:16px;">&lsaquo; Volver</button>
     <div class="login-card">
-      <div style="font-size:.72rem;font-weight:800;color:#f0c040;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;text-align:center;">🔑 Administrador</div>
+      <div style="font-size:.72rem;font-weight:800;color:#f0c040;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;text-align:center;">Administrador</div>
       <div class="login-field-label">Correo</div>
       <input class="login-input" id="login-user" type="email" placeholder="correo@ejemplo.com" autocomplete="username" autocapitalize="none"/>
-      <div class="login-field-label">Contraseña</div>
-      <input class="login-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
-      <div class="login-error" id="login-error">❌ Usuario o contraseña incorrectos</div>
-      <button class="btn-login" onclick="doLogin()">Iniciar sesión</button>
+      <div class="login-field-label">Contrasena</div>
+      <input class="login-input" id="login-pass" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+      <div class="login-error" id="login-error">Usuario o contrasena incorrectos</div>
+      <button class="btn-login" onclick="doLogin()">Iniciar sesion</button>
     </div>
   </div>
 
-  <!-- Formulario Empleado (PIN) -->
   <div id="form-empleado" style="display:none;width:100%;max-width:360px">
-    <button onclick="showRoleSelector()" style="background:none;border:none;color:rgba(255,255,255,.6);font-size:.82rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:16px;display:flex;align-items:center;gap:5px;">‹ Volver</button>
+    <button onclick="showRoleSelector()" style="background:none;border:none;color:rgba(255,255,255,.6);font-size:.82rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:16px;">&lsaquo; Volver</button>
     <div class="login-card">
-      <div style="font-size:.72rem;font-weight:800;color:#2ecc71;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;text-align:center;">👤 Empleado</div>
+      <div style="font-size:.72rem;font-weight:800;color:#2ecc71;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;text-align:center;">Empleado</div>
       <div class="login-field-label">PIN de acceso</div>
-      <input class="login-input" id="pin-input" type="password" inputmode="numeric" maxlength="8" placeholder="• • • •" style="font-size:1.4rem;letter-spacing:6px;text-align:center;" onkeydown="if(event.key==='Enter')doLoginEmpleado()"/>
-      <div class="login-error" id="pin-error">❌ PIN incorrecto</div>
+      <input class="login-input" id="pin-input" type="password" inputmode="numeric" maxlength="8" placeholder="&bull; &bull; &bull; &bull;" style="font-size:1.4rem;letter-spacing:6px;text-align:center;" onkeydown="if(event.key==='Enter')doLoginEmpleado()"/>
+      <div class="login-error" id="pin-error">PIN incorrecto</div>
       <button class="btn-login" style="background:#27ae60" onclick="doLoginEmpleado()">Entrar</button>
     </div>
   </div>
 
-  <div class="login-footer">Acceso restringido · Solo personal autorizado</div>
+  <div class="login-footer">Acceso restringido &middot; Solo personal autorizado</div>
 </div>
 
 <div id="app-header">
@@ -932,20 +919,10 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#1a3a5c 0
           <div class="pay-method-desc">Pago en billetes o monedas</div>
         </div>
       </button>
-      <button class="pay-method-btn" onclick="selectPayMethod('nequi-cindy')" id="pay-nequi-cindy" style="border-color:rgba(142,68,173,.4)">
-        <span class="pay-method-icon">📱</span>
-        <div class="pay-method-info">
-          <div class="pay-method-name" style="color:#8e44ad">Nequi Cindy</div>
-          <div class="pay-method-desc">Transferencia a Cindy</div>
-        </div>
-      </button>
-      <button class="pay-method-btn" onclick="selectPayMethod('nequi-jose')" id="pay-nequi-jose" style="border-color:rgba(142,68,173,.4)">
-        <span class="pay-method-icon">📱</span>
-        <div class="pay-method-info">
-          <div class="pay-method-name" style="color:#8e44ad">Nequi José</div>
-          <div class="pay-method-desc">Transferencia a José</div>
-        </div>
-      </button>
+      <button class="pay-method-btn" onclick="selectPayMethod('nequi')" id="pay-nequi" style="border-color:rgba(142,68,173,.4)">
+          <div class="pay-method-icon" style="background:linear-gradient(135deg,#8e44ad,#6c3483)">📱</div>
+          <div class="pay-method-name" style="color:#8e44ad">Nequi</div>
+        </button>
       <button class="pay-method-btn" onclick="selectPayMethod('credito')" id="pay-credito">
         <span class="pay-method-icon">📋</span>
         <div class="pay-method-info">
@@ -964,15 +941,13 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#1a3a5c 0
         <div class="mixto-label">Primer pago</div>
         <div class="mixto-row">
           <button class="mixto-met-btn" id="mx-btn-1-efectivo" onclick="selMixtoMet(1,'efectivo')">💵 Efectivo</button>
-          <button class="mixto-met-btn" id="mx-btn-1-nequi-cindy" onclick="selMixtoMet(1,'nequi-cindy')" style="color:#8e44ad">📱 N.Cindy</button>
-          <button class="mixto-met-btn" id="mx-btn-1-nequi-jose"  onclick="selMixtoMet(1,'nequi-jose')" style="color:#8e44ad">📱 N.José</button>
+          <button class="mixto-met-btn" id="mx-btn-1-nequi" onclick="selMixtoMet(1,'nequi')" style="color:#8e44ad">📱 Nequi</button>
           <input  class="mixto-amount" id="mx-amount-1" type="number" placeholder="Monto $" min="0" oninput="updateMixtoResto()"/>
         </div>
         <div class="mixto-label">Segundo pago</div>
         <div class="mixto-row">
           <button class="mixto-met-btn" id="mx-btn-2-efectivo" onclick="selMixtoMet(2,'efectivo')">💵 Efectivo</button>
-          <button class="mixto-met-btn" id="mx-btn-2-nequi-cindy" onclick="selMixtoMet(2,'nequi-cindy')" style="color:#8e44ad">📱 N.Cindy</button>
-          <button class="mixto-met-btn" id="mx-btn-2-nequi-jose"  onclick="selMixtoMet(2,'nequi-jose')" style="color:#8e44ad">📱 N.José</button>
+          <button class="mixto-met-btn" id="mx-btn-2-nequi" onclick="selMixtoMet(2,'nequi')" style="color:#8e44ad">📱 Nequi</button>
           <button class="mixto-met-btn" id="mx-btn-2-credito"  onclick="selMixtoMet(2,'credito')">📋 Crédito</button>
           <input  class="mixto-amount" id="mx-amount-2" type="number" placeholder="Resto $" min="0" readonly style="background:#f0f0f0;color:#888"/>
         </div>
@@ -1069,9 +1044,8 @@ const MENU = [
 const TABLES = Array.from({length:10},(_,i)=>({id:i+1,number:i+1,seats:[2,4,4,6,2,4,4,2,6,4][i]}));
 
 // ── ROL ───────────────────────────────────────────────────────────────────────
-// 'admin' = acceso total | 'empleado' = solo pedidos, menú, cocina, finanzas del día
 let currentRole = null;
-const EMPLOYEE_PIN = '1234'; // ← cambia este PIN cuando quieras
+const EMPLOYEE_PIN = '1234';
 
 // ── ESTADO ────────────────────────────────────────────────────────────────────
 let orders        = [];
@@ -1173,6 +1147,58 @@ function saveOrder(o){
 function savePreciosIngr(){
   REF.preciosIngr.set(preciosIngr);
 }
+function renderFinanzasEmpleado(el){
+  const ahora = new Date();
+  const inicioDia = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate()).getTime();
+  const pedidosHoy = orders.filter(o => {
+    if(!isClosed(o)||!o.closedAt) return false;
+    if(typeof o.closedAt==='number') return o.closedAt>=inicioDia;
+    const m=(o.closedAt||'').match(/(\d+)\/(\d+)\/(\d+)/);
+    if(!m) return false;
+    return new Date(m[3],m[2]-1,m[1]).getTime()>=inicioDia;
+  });
+  let ef=0,nq=0,cr=0;
+  pedidosHoy.forEach(o=>{
+    const t=totalOf(o);
+    if(o.status==='credito'){cr+=t;return;}
+    if(o.payMethod==='nequi'||o.payMethod==='nequi-cindy'||o.payMethod==='nequi-jose') nq+=t;
+    else if(o.payMethod==='efectivo') ef+=t;
+    else if(o.payMethod==='mixto'&&o.pagos){
+      o.pagos.forEach(p=>{
+        if(p.method==='efectivo') ef+=p.amount;
+        else if(p.method==='nequi'||p.method==='nequi-cindy'||p.method==='nequi-jose') nq+=p.amount;
+        else if(p.method==='credito') cr+=p.amount;
+      });
+    }
+  });
+  const fechaHoy=ahora.toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'});
+  el.innerHTML='<div class="fin-wrap" style="padding:12px">'
+    +'<div style="text-align:center;margin-bottom:16px">'
+    +'<div style="font-size:.72rem;font-weight:800;color:rgba(255,255,255,.5);letter-spacing:1.5px;text-transform:uppercase">Resumen del dia</div>'
+    +'<div style="font-size:.88rem;font-weight:800;color:#f0c040;margin-top:4px;text-transform:capitalize">'+fechaHoy+'</div>'
+    +'</div>'
+    +'<div class="fin-balance" style="margin-bottom:10px">'
+    +'<div class="fin-balance-label">Total vendido hoy</div>'
+    +'<div class="fin-balance-val" style="color:#2ecc71">'+fmt(Math.round(ef+nq+cr))+'</div>'
+    +'<div style="font-size:.72rem;color:#aaa;margin-top:6px">'+pedidosHoy.length+' pedido(s) cobrado(s)</div>'
+    +'</div>'
+    +'<div class="fin-card" style="background:linear-gradient(135deg,#1a5c2e,#27ae60);box-shadow:0 4px 16px rgba(39,174,96,.4);margin-bottom:10px">'
+    +'<div class="fin-card-header"><span class="fin-card-icon">&#x1F4B5;</span><span class="fin-card-title">EFECTIVO</span></div>'
+    +'<div class="fin-main-num" style="color:#fff">'+fmt(Math.round(ef))+'</div>'
+    +'</div>'
+    +'<div class="fin-card" style="background:linear-gradient(135deg,#3d1a5c,#8e44ad);box-shadow:0 4px 16px rgba(142,68,173,.4);margin-bottom:10px">'
+    +'<div class="fin-card-header"><span class="fin-card-icon">&#x1F4F1;</span><span class="fin-card-title">NEQUI</span></div>'
+    +'<div class="fin-main-num" style="color:#fff">'+fmt(Math.round(nq))+'</div>'
+    +'</div>'
+    +(cr>0?'<div class="fin-card" style="background:linear-gradient(135deg,#5c1a1a,#c0392b);box-shadow:0 4px 16px rgba(192,57,43,.4);margin-bottom:10px">'
+    +'<div class="fin-card-header"><span class="fin-card-icon">&#x1F4CB;</span><span class="fin-card-title">A CREDITO</span></div>'
+    +'<div class="fin-main-num" style="color:#fff">'+fmt(Math.round(cr))+'</div>'
+    +'</div>':'')
+    +'<div style="background:rgba(255,255,255,.06);border-radius:10px;padding:10px 14px;text-align:center;margin-top:6px">'
+    +'<div style="font-size:.72rem;color:rgba(255,255,255,.4);font-weight:700">Informacion detallada restringida a administradores</div>'
+    +'</div></div>';
+}
+
 function loadPreciosIngr(){
   preciosIngr = Object.assign({}, PRECIOS_DEFAULT, preciosIngr);
 }
@@ -1256,13 +1282,11 @@ function closeMoreMenu(){
 }
 
 function switchTab(t){
-  // Bloquear tabs de admin si el rol es empleado
   const adminOnlyTabs = ['historial','costos','prestamistas','gastos'];
   if(currentRole==='empleado' && adminOnlyTabs.includes(t)){
     alert('🔒 Esta sección es solo para administradores.');
     return;
   }
-
   document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.view').forEach(el=>{el.classList.remove('active');el.style.display='none';});
   const v=document.getElementById('view-'+t);
@@ -1492,15 +1516,8 @@ function renderHistorial(){
   const totalEfectivo=paid.filter(o=>o.status==='paid'&&o.payMethod==='efectivo').reduce((s,o)=>s+totalOf(o),0)
     + orders.filter(o=>isClosed(o)).flatMap(o=>(Array.isArray(o.abonos)?o.abonos:Object.values(o.abonos||{})).filter(a=>a.payMethod==='efectivo'&&fechaEnPeriodo(a.fecha))).reduce((s,a)=>s+a.amount,0)
     + mixtoOrders.flatMap(o=>o.pagos.filter(p=>p.method==='efectivo')).reduce((s,p)=>s+p.amount,0);
-  const totalNequiCindy=paid.filter(o=>o.status==='paid'&&o.payMethod==='nequi-cindy').reduce((s,o)=>s+totalOf(o),0)
-    + orders.filter(o=>isClosed(o)).flatMap(o=>(Array.isArray(o.abonos)?o.abonos:Object.values(o.abonos||{})).filter(a=>a.payMethod==='nequi-cindy'&&fechaEnPeriodo(a.fecha))).reduce((s,a)=>s+a.amount,0)
-    + mixtoOrders.flatMap(o=>o.pagos.filter(p=>p.method==='nequi-cindy')).reduce((s,p)=>s+p.amount,0);
-  const totalNequiJose=paid.filter(o=>o.status==='paid'&&o.payMethod==='nequi-jose').reduce((s,o)=>s+totalOf(o),0)
-    + orders.filter(o=>isClosed(o)).flatMap(o=>(Array.isArray(o.abonos)?o.abonos:Object.values(o.abonos||{})).filter(a=>a.payMethod==='nequi-jose'&&fechaEnPeriodo(a.fecha))).reduce((s,a)=>s+a.amount,0)
-    + mixtoOrders.flatMap(o=>o.pagos.filter(p=>p.method==='nequi-jose')).reduce((s,p)=>s+p.amount,0);
-  const totalNequi=totalNequiCindy+totalNequiJose;
-  const _dummy_neq=paid.filter(o=>o.status==='paid'&&(o.payMethod==='nequi'||o.payMethod==='nequi-cindy'||o.payMethod==='nequi-jose')).reduce((s,o)=>s+totalOf(o),0)
-    + orders.filter(o=>isClosed(o)).flatMap(o=>(Array.isArray(o.abonos)?o.abonos:Object.values(o.abonos||{})).filter(a=>a.payMethod==='nequi'||a.payMethod==='nequi-cindy'||a.payMethod==='nequi-jose'&&fechaEnPeriodo(a.fecha))).reduce((s,a)=>s+a.amount,0)
+  const totalNequi=paid.filter(o=>o.status==='paid'&&o.payMethod==='nequi').reduce((s,o)=>s+totalOf(o),0)
+    + orders.filter(o=>isClosed(o)).flatMap(o=>(Array.isArray(o.abonos)?o.abonos:Object.values(o.abonos||{})).filter(a=>(a.payMethod==='nequi'||a.payMethod==='nequi-cindy'||a.payMethod==='nequi-jose')&&fechaEnPeriodo(a.fecha))).reduce((s,a)=>s+a.amount,0)
     + mixtoOrders.flatMap(o=>o.pagos.filter(p=>p.method==='nequi'||p.method==='nequi-cindy'||p.method==='nequi-jose')).reduce((s,p)=>s+p.amount,0);
   const creditOrders=orders.filter(o=>o.status==='credito'||o.status==='mixto-credito');
   const totalAbonado=creditOrders.reduce((s,o)=>s+(o.abonos||[]).reduce((a,ab)=>a+ab.amount,0),0);
@@ -1517,8 +1534,7 @@ function renderHistorial(){
 
   const statsHTML=`<div class="stats-bar">
     <div class="stat-box" style="background:linear-gradient(135deg,#1a5c2e,#27ae60);box-shadow:0 4px 14px rgba(39,174,96,.35)"><div class="stat-num" style="color:#fff">${fmt(totalEfectivo)}</div><div class="stat-lbl">Efectivo</div></div>
-    <div class="stat-box" style="background:linear-gradient(135deg,#3d1a5c,#8e44ad);box-shadow:0 4px 14px rgba(142,68,173,.35)"><div class="stat-num" style="color:#fff">${fmt(totalNequiCindy)}</div><div class="stat-lbl">N.Cindy</div></div>
-    <div class="stat-box" style="background:linear-gradient(135deg,#3d1a5c,#8e44ad);box-shadow:0 4px 14px rgba(142,68,173,.35)"><div class="stat-num" style="color:#fff">${fmt(totalNequiJose)}</div><div class="stat-lbl">N.José</div></div>
+    <div class="stat-box" style="background:linear-gradient(135deg,#3d1a5c,#8e44ad);box-shadow:0 4px 14px rgba(142,68,173,.35)"><div class="stat-num" style="color:#fff">${fmt(totalNequi)}</div><div class="stat-lbl">📱 Nequi</div></div>
     <div class="stat-box" style="background:linear-gradient(135deg,#5c1a1a,#e74c3c);box-shadow:0 4px 14px rgba(231,76,60,.35)"><div class="stat-num" style="color:#fff">${fmt(totalPendiente)}</div><div class="stat-lbl">Por cobrar</div></div>
   </div>`;
 
@@ -1545,8 +1561,7 @@ function renderHistorial(){
   // sub-tabs Efectivo / Nequi / Créditos
   const subTabsHTML=`<div class="hist-subtabs">
     <button class="hist-subtab-btn" onclick="setHistSubTab('efectivo')" style="background:#27ae60;color:#fff;border:3px solid ${histSubTab==='efectivo'?'#1a5c2e':'transparent'}">💵 Efectivo</button>
-    <button class="hist-subtab-btn" onclick="setHistSubTab('nequi-cindy')" style="background:#8e44ad;color:#fff;border:3px solid ${histSubTab==='nequi-cindy'?'#3d1a5c':'transparent'}">📱 N.Cindy</button>
-    <button class="hist-subtab-btn" onclick="setHistSubTab('nequi-jose')" style="background:#8e44ad;color:#fff;border:3px solid ${histSubTab==='nequi-jose'?'#3d1a5c':'transparent'}">📱 N.José</button>
+    <button class="hist-subtab-btn" onclick="setHistSubTab('nequi')" style="background:#8e44ad;color:#fff;border:3px solid ${histSubTab==='nequi'?'#3d1a5c':'transparent'}">📱 Nequi</button>
     <button class="hist-subtab-btn" onclick="setHistSubTab('mixto')" style="background:#e67e22;color:#fff;border:3px solid ${histSubTab==='mixto'?'#5c3a1a':'transparent'}">💳 Mixto</button>
     <button class="hist-subtab-btn" onclick="setHistSubTab('creditos')" style="background:#e74c3c;color:#fff;border:3px solid ${histSubTab==='creditos'?'#5c1a1a':'transparent'}">📋 Créditos</button>
   </div>`;
@@ -1576,7 +1591,7 @@ function renderHistorial(){
         const tot=totalOf(o);
         const abo=(o.abonos||[]).reduce((s,a)=>s+a.amount,0);
         const pen=tot-abo;
-        const abonosHTML=(o.abonos||[]).map(a=>`<div class="abono-row" style="font-size:.72rem"><span class="abono-label">${(a.payMethod==='nequi'||a.payMethod==='nequi-cindy'||a.payMethod==='nequi-jose')?'📱':'💵'} Abono</span><span>${a.fecha}</span><span style="color:#27ae60;font-weight:700">+${fmt(a.amount)}</span></div>`).join('');
+        const abonosHTML=(o.abonos||[]).map(a=>`<div class="abono-row" style="font-size:.72rem"><span class="abono-label">${a.payMethod==='nequi'?'📱':'💵'} Abono</span><span>${a.fecha}</span><span style="color:#27ae60;font-weight:700">+${fmt(a.amount)}</span></div>`).join('');
         return `<div class="credito-grupo-pedido">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
             <div><div style="font-weight:800;font-size:.82rem">Pedido #${o.number}${o.tableId?` · Mesa ${o.tableId}`:''}</div><div style="font-size:.68rem;color:#aaa">${o.closedAt||''}</div></div>
@@ -1622,7 +1637,7 @@ function renderHistorial(){
       return new Date(pb[3],pb[2]-1,pb[1],pb[4],pb[5])-new Date(pa[3],pa[2]-1,pa[1],pa[4],pa[5]);
     }).map(o=>{
       const total=totalOf(o);
-      const pagosLabel=(o.pagos||[]).map(p=>`${(p.method==='nequi'||p.method==='nequi-cindy'||p.method==='nequi-jose')?'📱':'💵'} ${((p.method==='nequi'||p.method==='nequi-cindy'||p.method==='nequi-jose')?(p.method==='nequi-cindy'?'Nequi Cindy':p.method==='nequi-jose'?'Nequi José':'Nequi'):'Efectivo')} ${fmt(p.amount)}`).join(' + ');
+      const pagosLabel=(o.pagos||[]).map(p=>`${p.method==='nequi'?'📱':'💵'} ${p.method==='nequi'?'Nequi':'Efectivo'} ${fmt(p.amount)}`).join(' + ');
       const creditPago=(o.pagos||[]).find(p=>p.method==='credito');
       const creditLine=creditPago?`<div style="font-size:.72rem;color:#8e44ad;font-weight:700;margin-top:2px">📋 Crédito ${fmt(creditPago.amount)}${o.deudorName?' · '+o.deudorName:''}</div>`:'';
       return `<div class="hist-order" style="background:linear-gradient(135deg,#5c3a1a,#e67e22);box-shadow:0 4px 14px rgba(230,126,34,.35)">
@@ -1674,7 +1689,7 @@ function renderHistorial(){
   const summaryBox='';
 
   if(!filtered.length&&!abonosDelMetodo.length){
-    el.innerHTML=`<div class="historial-wrap">${mainTabsHTML}${periodoHTML}${statsHTML}${subTabsHTML}${summaryBox}<div class="empty" style="padding:2rem"><div class="empty-icon">${icon}</div><div class="empty-title">Sin pagos en ${method==='efectivo'?'Efectivo':method==='nequi-cindy'?'Nequi Cindy':'Nequi José'} · ${PERIODO_LABELS[histPeriodo]}</div></div></div>`;
+    el.innerHTML=`<div class="historial-wrap">${mainTabsHTML}${periodoHTML}${statsHTML}${subTabsHTML}${summaryBox}<div class="empty" style="padding:2rem"><div class="empty-icon">${icon}</div><div class="empty-title">Sin pagos en ${method==='efectivo'?'Efectivo':'Nequi'} · ${PERIODO_LABELS[histPeriodo]}</div></div></div>`;
     return;
   }
 
@@ -2315,7 +2330,7 @@ function openBill(orderId){
       </div>
     </div>`;
   // reset selección
-  ['efectivo','nequi-cindy','nequi-jose','credito','mixto'].forEach(m=>{const el=document.getElementById('pay-'+m);if(el)el.classList.remove('selected');});
+  ['efectivo','nequi','credito','mixto'].forEach(m=>{const el=document.getElementById('pay-'+m);if(el)el.classList.remove('selected');});
   document.getElementById('pay-confirm-btn').classList.remove('visible');
   document.getElementById('pay-confirm-btn').textContent='Confirmar pago';
   document.getElementById('bill-screen').classList.add('open');
@@ -2327,7 +2342,7 @@ let mixtoMet1=null, mixtoMet2=null;
 
 function selectPayMethod(method){
   selPayMethod=method;
-  ['efectivo','nequi-cindy','nequi-jose','credito','mixto'].forEach(m=>{
+  ['efectivo','nequi','credito','mixto'].forEach(m=>{
     const el=document.getElementById('pay-'+m); if(el) el.classList.toggle('selected',m===method);
   });
   const panel=document.getElementById('mixto-panel');
@@ -2340,26 +2355,26 @@ function selectPayMethod(method){
     document.getElementById('mx-amount-1').value='';
     document.getElementById('mx-amount-2').value='';
     document.getElementById('mixto-resto-label').textContent='';
-    ['efectivo','nequi-cindy','nequi-jose'].forEach(m=>{ const el=document.getElementById('mx-btn-1-'+m); if(el) el.classList.remove('sel'); });
-    ['efectivo','nequi-cindy','nequi-jose','credito'].forEach(m=>{ const el=document.getElementById('mx-btn-2-'+m); if(el) el.classList.remove('sel'); });
+    ['efectivo','nequi'].forEach(m=>{ const el=document.getElementById('mx-btn-1-'+m); if(el) el.classList.remove('sel'); });
+    ['efectivo','nequi','credito'].forEach(m=>{ const el=document.getElementById('mx-btn-2-'+m); if(el) el.classList.remove('sel'); });
     return;
   }
   panel.classList.remove('open');
   btn.classList.add('visible');
   const o=orders.find(x=>String(x.id)===String(billOrderId));
   const total=o?totalOf(o):0;
-  const labels={efectivo:`💵 Cobrar ${fmt(total)} en efectivo`,'nequi-cindy':`📱 Cobrar ${fmt(total)} Nequi Cindy`,'nequi-jose':`📱 Cobrar ${fmt(total)} Nequi José`,credito:`📋 Registrar ${fmt(total)} a crédito`};
+  const labels={efectivo:`💵 Cobrar ${fmt(total)} en efectivo`,nequi:`📱 Cobrar ${fmt(total)} por Nequi`,credito:`📋 Registrar ${fmt(total)} a crédito`};
   btn.textContent=labels[method]||'Confirmar';
 }
 
 function selMixtoMet(slot, met){
   if(slot===1){
     mixtoMet1=met;
-    ['efectivo','nequi-cindy','nequi-jose'].forEach(m=>{ const el=document.getElementById('mx-btn-1-'+m); if(el) el.classList.toggle('sel',m===met); });
+    ['efectivo','nequi'].forEach(m=>{ const el=document.getElementById('mx-btn-1-'+m); if(el) el.classList.toggle('sel',m===met); });
     updateMixtoResto();
   } else {
     mixtoMet2=met;
-    ['efectivo','nequi-cindy','nequi-jose','credito'].forEach(m=>{ const el=document.getElementById('mx-btn-2-'+m); if(el) el.classList.toggle('sel',m===met); });
+    ['efectivo','nequi','credito'].forEach(m=>{ const el=document.getElementById('mx-btn-2-'+m); if(el) el.classList.toggle('sel',m===met); });
   }
 }
 
@@ -2475,12 +2490,7 @@ function finFechaOk(fechaStr){
 function renderFinanzas(){
   const el = document.getElementById('view-finanzas');
   if(!el) return;
-
-  // ── MODO EMPLEADO: solo resumen del día ──────────────────────────────────
-  if(currentRole === 'empleado'){
-    renderFinanzasEmpleado(el);
-    return;
-  }
+  if(currentRole === 'empleado'){ renderFinanzasEmpleado(el); return; }
 
   const closed = orders.filter(o => isClosed(o) && finFechaOk(o.closedAt));
 
@@ -2492,7 +2502,7 @@ function renderFinanzas(){
     else if(o.payMethod === 'mixto' && o.pagos){
       o.pagos.forEach(p => {
         if(p.method === 'efectivo') inEfectivo += p.amount;
-        else if(p.method==='nequi'||p.method==='nequi-cindy'||p.method==='nequi-jose') inNequi += p.amount;
+        else if(p.method==='nequi') inNequi += p.amount;
       });
     }
   });
@@ -2588,78 +2598,6 @@ function renderFinanzas(){
       <div class="fin-card-header"><span class="fin-card-icon">🏦</span><span class="fin-card-title">DEUDAS DEL NEGOCIO</span></div>
       <div class="fin-main-num" style="color:#e67e22">${fmt(Math.round(deudasNegocio))}</div>
       <div class="fin-breakdown">${prestHTML}</div>
-    </div>
-  </div>`;
-}
-
-// ── FINANZAS EMPLEADO (solo resumen del día) ──────────────────────────────────
-function renderFinanzasEmpleado(el){
-  // Solo pedidos cobrados HOY
-  const ahora = new Date();
-  const inicioDia = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate()).getTime();
-
-  const pedidosHoy = orders.filter(o => isClosed(o) && o.closedAt && (() => {
-    // closedAt puede ser string "DD/MM/YYYY HH:MM" o timestamp
-    if(typeof o.closedAt === 'number') return o.closedAt >= inicioDia;
-    // intentar parsear la fecha string
-    const m = (o.closedAt||'').match(/(\d+)\/(\d+)\/(\d+)/);
-    if(!m) return false;
-    const fd = new Date(m[3], m[2]-1, m[1]).getTime();
-    return fd >= inicioDia;
-  })());
-
-  let totalEfectivo = 0, totalNequi = 0, totalCredito = 0;
-  pedidosHoy.forEach(o => {
-    const t = totalOf(o);
-    if(o.status === 'credito') { totalCredito += t; return; }
-    if(o.payMethod === 'efectivo') totalEfectivo += t;
-    else if(o.payMethod==='nequi'||o.payMethod==='nequi-cindy'||o.payMethod==='nequi-jose') totalNequi += t;
-    else if(o.payMethod === 'mixto' && o.pagos){
-      o.pagos.forEach(p => {
-        if(p.method === 'efectivo') totalEfectivo += p.amount;
-        else if(p.method==='nequi'||p.method==='nequi-cindy'||p.method==='nequi-jose') totalNequi += p.amount;
-        else if(p.method === 'credito') totalCredito += p.amount;
-      });
-    }
-  });
-  const totalVendido = totalEfectivo + totalNequi + totalCredito;
-
-  const fechaHoy = ahora.toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long'});
-
-  el.innerHTML = `<div class="fin-wrap" style="padding:12px">
-    <div style="text-align:center;margin-bottom:16px">
-      <div style="font-size:.72rem;font-weight:800;color:rgba(255,255,255,.5);letter-spacing:1.5px;text-transform:uppercase">📅 Resumen del día</div>
-      <div style="font-size:.88rem;font-weight:800;color:#f0c040;margin-top:4px;text-transform:capitalize">${fechaHoy}</div>
-    </div>
-
-    <!-- Total vendido -->
-    <div class="fin-balance" style="margin-bottom:10px">
-      <div class="fin-balance-label">📦 Total vendido hoy</div>
-      <div class="fin-balance-val" style="color:#2ecc71">${fmt(Math.round(totalVendido))}</div>
-      <div style="font-size:.72rem;color:#aaa;margin-top:6px">${pedidosHoy.length} pedido(s) cobrado(s)</div>
-    </div>
-
-    <!-- Efectivo -->
-    <div class="fin-card" style="background:linear-gradient(135deg,#1a5c2e,#27ae60);box-shadow:0 4px 16px rgba(39,174,96,.4);margin-bottom:10px">
-      <div class="fin-card-header"><span class="fin-card-icon">💵</span><span class="fin-card-title">EFECTIVO</span></div>
-      <div class="fin-main-num" style="color:#fff">${fmt(Math.round(totalEfectivo))}</div>
-    </div>
-
-    <!-- Nequi -->
-    <div class="fin-card" style="background:linear-gradient(135deg,#3d1a5c,#8e44ad);box-shadow:0 4px 16px rgba(142,68,173,.4);margin-bottom:10px">
-      <div class="fin-card-header"><span class="fin-card-icon">📱</span><span class="fin-card-title">NEQUI</span></div>
-      <div class="fin-main-num" style="color:#fff">${fmt(Math.round(totalNequi))}</div>
-    </div>
-
-    ${totalCredito > 0 ? `
-    <!-- Créditos -->
-    <div class="fin-card" style="background:linear-gradient(135deg,#5c1a1a,#c0392b);box-shadow:0 4px 16px rgba(192,57,43,.4);margin-bottom:10px">
-      <div class="fin-card-header"><span class="fin-card-icon">📋</span><span class="fin-card-title">A CRÉDITO</span></div>
-      <div class="fin-main-num" style="color:#fff">${fmt(Math.round(totalCredito))}</div>
-    </div>` : ''}
-
-    <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:10px 14px;text-align:center;margin-top:6px">
-      <div style="font-size:.72rem;color:rgba(255,255,255,.4);font-weight:700">🔒 Información detallada restringida a administradores</div>
     </div>
   </div>`;
 }
@@ -3511,8 +3449,8 @@ function exportarHistorialPDF(){
   const _mixto2=paid.filter(o=>o.payMethod==='mixto'&&o.pagos);
   const totalEfectivo = paid.filter(o=>isClosed(o)&&o.payMethod==='efectivo').reduce((s,o)=>s+totalOf(o),0)
     + _mixto2.flatMap(o=>o.pagos.filter(p=>p.method==='efectivo')).reduce((s,p)=>s+p.amount,0);
-  const totalNequi    = paid.filter(o=>isClosed(o)&&(o.payMethod==='nequi'||o.payMethod==='nequi-cindy'||o.payMethod==='nequi-jose')).reduce((s,o)=>s+totalOf(o),0)
-    + _mixto2.flatMap(o=>o.pagos.filter(p=>p.method==='nequi'||p.method==='nequi-cindy'||p.method==='nequi-jose')).reduce((s,p)=>s+p.amount,0);
+  const totalNequi    = paid.filter(o=>isClosed(o)&&o.payMethod==='nequi').reduce((s,o)=>s+totalOf(o),0)
+    e((s,p)=>s+p.amount,0);
   const totalGeneral  = paid.filter(o=>isClosed(o)).reduce((s,o)=>s+totalOf(o),0);
   const creditOrders  = orders.filter(o=>o.status==='credito'||o.status==='mixto-credito');
   const totalPendiente= creditOrders.reduce((s,o)=>s+((o.payMethod==='mixto'&&o.pagos)?(o.pagos.find(p=>p.method==='credito')?.amount||totalOf(o)):totalOf(o)),0)
@@ -3582,8 +3520,8 @@ function exportarHistorialPDF(){
 <table>
   <tr><th>#</th><th>Fecha</th><th>Mesa</th><th>Items</th><th>Pago</th><th class="num">Total</th></tr>
   ${listaPedidos.map(o=>{
-    const metodo = o.status==='credito'||o.status==='mixto-credito'?'cre':o.payMethod==='mixto'?'mix':(o.payMethod==='nequi'||o.payMethod==='nequi-cindy'||o.payMethod==='nequi-jose')?'neq':'efe';
-    const label  = o.status==='credito'?'Crédito':o.status==='mixto-credito'?'Mixto+Crédito':o.payMethod==='mixto'?'💳 '+((o.pagos||[]).map(p=>((p.method==='nequi'||p.method==='nequi-cindy'||p.method==='nequi-jose')?(p.method==='nequi-cindy'?'Nequi Cindy':p.method==='nequi-jose'?'Nequi José':'Nequi'):'Efectivo')+' '+fmt(p.amount)).join(' + ')):o.payMethod==='nequi-cindy'?'Nequi Cindy':o.payMethod==='nequi-jose'?'Nequi José':o.payMethod==='nequi'?'Nequi':'Efectivo';
+    const metodo = o.status==='credito'||o.status==='mixto-credito'?'cre':o.payMethod==='mixto'?'mix':o.payMethod==='nequi'?'neq':'efe';
+    const label  = o.status==='credito'?'Crédito':o.status==='mixto-credito'?'Mixto+Crédito':o.payMethod==='mixto'?'💳 '+((o.pagos||[]).map(p=>((p.method==='nequi'||p.method==='nequi-cindy'||p.method==='nequi-jose')?('Nequi'):'Efectivo')+' '+fmt(p.amount)).join(' + ')):o.payMethod==='nequi-cindy'?'Nequi':o.payMethod==='nequi-jose'?'Nequi':o.payMethod==='nequi'?'Nequi':'Efectivo';
     const mColor = metodo==='neq'?'#8e44ad':metodo==='cre'?'#8e44ad':metodo==='mix'?'#e67e22':'#27ae60';
     const items  = o.items.map(i=>`${i.qty}×${i.name}`).join(', ');
     return `<tr>
@@ -3611,7 +3549,6 @@ function exportarHistorialPDF(){
 // ── LOGIN (Firebase Authentication) ──────────────────────────────────────────
 const ALLOWED_UID = 'CIfVNxtvXvQfoLqt0NEkC77TUfL2';
 
-// ── NAVEGACIÓN DE ROL ─────────────────────────────────────────────────────────
 function showRoleSelector(){
   document.getElementById('role-selector').style.display='block';
   document.getElementById('form-admin').style.display='none';
@@ -3636,7 +3573,6 @@ function doLoginEmpleado(){
   const err = document.getElementById('pin-error');
   err.classList.remove('show');
   if(pin === EMPLOYEE_PIN){
-    currentRole = 'empleado';
     enterApp('empleado');
   } else {
     err.classList.add('show');
@@ -3647,39 +3583,33 @@ function doLoginEmpleado(){
 
 function enterApp(role){
   currentRole = role;
-  // Ajustar UI según rol
   applyRoleUI();
-  // Ocultar login
   document.getElementById('login-screen').classList.remove('show');
-  document.getElementById('login-pass').value='';
+  if(document.getElementById('login-pass')) document.getElementById('login-pass').value='';
   loadData();
   switchTab('pedidos');
 }
 
 function applyRoleUI(){
   const isAdmin = currentRole==='admin';
-  // Header: badge de rol
   const badgeEl = document.getElementById('role-badge');
   if(badgeEl){
-    badgeEl.textContent = isAdmin ? '🔑 Admin' : '👤 Empleado';
+    badgeEl.textContent = isAdmin ? 'Admin' : 'Empleado';
     badgeEl.style.background = isAdmin ? 'rgba(240,192,64,.2)' : 'rgba(46,204,113,.2)';
     badgeEl.style.color = isAdmin ? '#f0c040' : '#2ecc71';
   }
-  // Ocultar el botón "⋮ MÁS" para empleados
   const tabMore = document.getElementById('tab-more');
   if(tabMore) tabMore.style.display = isAdmin ? '' : 'none';
-  // Ocultar items del menú desplegable para empleados
   document.querySelectorAll('.more-menu-item').forEach(el=>{
     el.style.display = isAdmin ? '' : 'none';
   });
-  // Tab Finanzas siempre visible pero con contenido diferente según rol
 }
 
 function doLogin(){
   const email = document.getElementById('login-user').value.trim();
   const pass  = document.getElementById('login-pass').value;
   const err   = document.getElementById('login-error');
-  const btn   = document.querySelector('.btn-login');
+  const btn   = document.querySelector('#form-admin .btn-login');
 
   err.classList.remove('show');
   btn.textContent = 'Verificando…';
@@ -3689,15 +3619,14 @@ function doLogin(){
     .then(cred => {
       if(cred.user.uid !== ALLOWED_UID){
         auth.signOut();
-        err.textContent = '❌ No tienes acceso a esta app';
+        err.textContent = 'No tienes acceso a esta app';
         err.classList.add('show');
         btn.textContent = 'Iniciar sesión';
         btn.disabled = false;
       }
-      // Si el UID es correcto, onAuthStateChanged llama a enterApp('admin')
     })
     .catch(() => {
-      err.textContent = '❌ Usuario o contraseña incorrectos';
+      err.textContent = 'Usuario o contraseña incorrectos';
       err.classList.add('show');
       document.getElementById('login-pass').value = '';
       document.getElementById('login-pass').focus();
@@ -3707,16 +3636,14 @@ function doLogin(){
 }
 
 function doLogout(){
-  // Si es empleado, no hay sesión Firebase que cerrar
   if(currentRole==='empleado'){
     currentRole=null;
     document.getElementById('login-screen').classList.add('show');
     showRoleSelector();
     return;
   }
-  auth.signOut();
   currentRole=null;
-  showRoleSelector();
+  auth.signOut();
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
@@ -3724,14 +3651,10 @@ function doLogout(){
 auth.onAuthStateChanged(user => {
   const loginScreen = document.getElementById('login-screen');
   if(user && user.uid === ALLOWED_UID){
-    // Admin autenticado vía Firebase
-    if(currentRole !== 'admin'){
-      enterApp('admin');
-    }
+    if(currentRole !== 'admin') enterApp('admin');
   } else if(currentRole === 'empleado'){
-    // Empleado ya autenticado con PIN — no hacer nada
+    // sesion PIN activa
   } else {
-    // Sin sesión — mostrar login
     loginScreen.classList.add('show');
     showRoleSelector();
   }
