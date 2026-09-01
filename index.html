@@ -1100,7 +1100,7 @@ Object.values(REF).forEach(r => { try{ r.keepSynced(true); }catch(e){} });
 
 // Alerta si hay escrituras locales al cerrar la página
 window.addEventListener('beforeunload', e => {
-  if(_localDirtyIds.size > 0){
+  if(_localDirtyIds.size > 0 || _localDeletedIds.size > 0){
     e.preventDefault();
     e.returnValue = '⚠️ Hay cambios sin guardar. ¿Salir de todas formas?';
   }
@@ -1116,10 +1116,39 @@ db.ref('.info/connected').on('value', snap => {
 });
 
 // ── SYNC OPTIMISTA ────────────────────────────────────────────────────────────
-// Set de IDs de pedidos modificados localmente — el listener los respeta
-let _localDirtyIds = new Set();
+// IDs de pedidos modificados (guardado pendiente) o eliminados (borrado pendiente)
+// localmente. Se guardan también en localStorage: si la página se refresca antes
+// de que Firebase confirme la escritura, al recargar se reintenta automáticamente
+// en vez de perder el cambio (pedido nuevo desaparece) o revertirlo (pedido
+// "borrado" reaparece).
+const PENDING_OPS_KEY = 'rm_pending_order_ops';
+function _loadPendingOps(){
+  try{
+    const raw = JSON.parse(localStorage.getItem(PENDING_OPS_KEY) || '{}');
+    return { saves: raw.saves || {}, deletes: Array.isArray(raw.deletes) ? raw.deletes : [] };
+  }catch(e){ return { saves:{}, deletes:[] }; }
+}
+function _savePendingOpsToDisk(){
+  try{ localStorage.setItem(PENDING_OPS_KEY, JSON.stringify(_pendingOps)); }catch(e){}
+}
+let _pendingOps = _loadPendingOps();
+
+let _localDirtyIds   = new Set(Object.keys(_pendingOps.saves));   // guardado pendiente
+let _localDeletedIds = new Set(_pendingOps.deletes);              // borrado pendiente
 function _markDirty(id){ _localDirtyIds.add(String(id)); }
 function _clearDirty(id){ _localDirtyIds.delete(String(id)); }
+function _markDeleted(id){
+  _localDeletedIds.add(String(id));
+  _localDirtyIds.delete(String(id));
+  delete _pendingOps.saves[String(id)];
+  if(!_pendingOps.deletes.includes(String(id))) _pendingOps.deletes.push(String(id));
+  _savePendingOpsToDisk();
+}
+function _clearDeleted(id){
+  _localDeletedIds.delete(String(id));
+  _pendingOps.deletes = _pendingOps.deletes.filter(x=>x!==String(id));
+  _savePendingOpsToDisk();
+}
 function _syncBg(fn){ try{ fn(); }catch(e){ console.warn('syncBg error',e); } }
 
 function saveData(){
@@ -1132,21 +1161,59 @@ function saveData(){
 }
 
 // Guarda UN solo pedido en Firebase (más confiable para operaciones de crédito)
+// Queda en cola en localStorage hasta que Firebase confirme — si hay un refresh
+// antes de eso, _flushPendingOrderOps() la reintenta al cargar.
 function saveOrder(o){
-  // Marca el pedido como "modificado localmente" para que el listener no lo sobreescriba
   _markDirty(o.id);
-  _syncBg(()=>{
-    REF.orders.child(String(o.id)).set(o).then(()=>{
-      // Escritura confirmada por Firebase → ya puede aceptar actualizaciones remotas
-      _clearDirty(o.id);
-    }).catch(e=>{ console.warn('saveOrder bg error', e); });
-  });
+  _pendingOps.saves[String(o.id)] = o;
+  _removeFromPendingDeletes(o.id);
+  _savePendingOpsToDisk();
+  _writeOrder(o);
   return Promise.resolve();
 }
+function _removeFromPendingDeletes(id){ _pendingOps.deletes = _pendingOps.deletes.filter(x=>x!==String(id)); }
 
-function savePreciosIngr(){
-  REF.preciosIngr.set(preciosIngr);
+function _writeOrder(o){
+  _syncBg(()=>{
+    REF.orders.child(String(o.id)).set(o).then(()=>{
+      _clearDirty(o.id);
+      delete _pendingOps.saves[String(o.id)];
+      _savePendingOpsToDisk();
+    }).catch(e=>{
+      console.warn('saveOrder bg error', e);
+      setTimeout(()=>{ if(_pendingOps.saves[String(o.id)]) _writeOrder(o); }, 3000);
+    });
+  });
 }
+
+// Elimina un pedido de Firebase y localmente, con reintento automático si falla
+// o si la conexión se cae antes de confirmar.
+function _deleteOrderEverywhere(id){
+  _markDeleted(id);
+  orders = orders.filter(x=>String(x.id)!==String(id));
+  renderPedidos();
+  updateBadge('pedidos', orders.filter(o=>isActive(o)).length);
+  updateBadge('kitchen', orders.filter(o=>o.status==='sent').length);
+  _deleteOrderRemote(id);
+}
+function _deleteOrderRemote(id){
+  _syncBg(()=>{
+    REF.orders.child(String(id)).remove().then(()=>{
+      _clearDeleted(id);
+    }).catch(e=>{
+      console.warn('delete order bg error', e);
+      setTimeout(()=>{ if(_localDeletedIds.has(String(id))) _deleteOrderRemote(id); }, 3000);
+    });
+  });
+}
+
+// Al cargar la app, reintenta cualquier guardado/borrado que quedó pendiente
+// de un refresh anterior (antes de que Firebase alcanzara a confirmarlo).
+function _flushPendingOrderOps(){
+  Object.values(_pendingOps.saves).forEach(o=>_writeOrder(o));
+  [..._pendingOps.deletes].forEach(id=>_deleteOrderRemote(id));
+}
+
 function renderFinanzasEmpleado(el){
   const ahora = new Date();
   const inicioDia = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate()).getTime();
@@ -1199,14 +1266,17 @@ function renderFinanzasEmpleado(el){
     +'</div></div>';
 }
 
-function loadPreciosIngr(){
-  preciosIngr = Object.assign({}, PRECIOS_DEFAULT, preciosIngr);
-}
-
 function loadData(){
   REF.orders.on('value', snap => {
     const val = snap.val();
-    const newOrders = val ? Object.values(val) : [];
+    let newOrders = val ? Object.values(val) : [];
+
+    // Nunca aceptar del servidor un pedido que tenemos pendiente de borrar
+    // localmente (evita que un pedido "eliminado" reaparezca por un refresh
+    // o por una actualización del servidor que llegó justo antes del borrado).
+    if(_localDeletedIds.size > 0){
+      newOrders = newOrders.filter(o => !_localDeletedIds.has(String(o.id)));
+    }
 
     // Detectar pedidos nuevos en cocina (status==='sent')
     const newSentIds = new Set(newOrders.filter(o=>o.status==='sent').map(o=>String(o.id)));
@@ -1214,14 +1284,24 @@ function loadData(){
     if(hayNuevos && _prevSentIds.size > 0) playKitchenSound();
     _prevSentIds = newSentIds;
 
-    // Mezclar: respetar pedidos modificados localmente, aceptar el resto del servidor
+    // Mezclar: respetar pedidos modificados/creados localmente, aceptar el resto del servidor
     if(_localDirtyIds.size > 0){
-      // Tomar los pedidos del servidor excepto los que tenemos localmente más frescos
       const localById = Object.fromEntries(orders.map(o=>[String(o.id),o]));
-      orders = newOrders.map(o => _localDirtyIds.has(String(o.id)) ? localById[String(o.id)] : o);
-      // Agregar los locales que aún no llegaron al servidor (nuevos no sincronizados)
-      orders.filter(o=>_localDirtyIds.has(String(o.id))&&!newOrders.find(n=>String(n.id)===String(o.id)))
-        .forEach(o=>orders.push(o));
+      // Para cada pedido dirty, usar la versión local si existe; si no (p.ej.
+      // justo tras un refresh, donde `orders` aún está vacío), caer al valor
+      // que quedó guardado en la cola pendiente en localStorage.
+      orders = newOrders.map(o => {
+        const id = String(o.id);
+        if(!_localDirtyIds.has(id)) return o;
+        return localById[id] || _pendingOps.saves[id] || o;
+      });
+      // Agregar los pedidos locales/pendientes que aún no llegaron al servidor
+      const presentIds = new Set(orders.map(o=>String(o.id)));
+      _localDirtyIds.forEach(id=>{
+        if(presentIds.has(id)) return;
+        const o = localById[id] || _pendingOps.saves[id];
+        if(o){ orders.push(o); presentIds.add(id); }
+      });
     } else {
       orders = newOrders;
     }
@@ -1232,6 +1312,11 @@ function loadData(){
     updateBadge('pedidos', orders.filter(o=>isActive(o)).length);
     updateBadge('kitchen', orders.filter(o=>o.status==='sent').length);
   });
+
+  // Reintenta cualquier guardado/borrado que haya quedado pendiente de una
+  // sesión anterior (p. ej. si se refrescó la página antes de que Firebase
+  // confirmara la escritura).
+  _flushPendingOrderOps();
 
   REF.counter.on('value', snap => {
     const val=snap.val();
@@ -1257,6 +1342,19 @@ function loadData(){
 }
 
 // ── UTILS ─────────────────────────────────────────────────────────────────────
+// Serializa un itemId (número o string) para insertarlo de forma segura dentro
+// de un atributo onclick="" (que usa comillas dobles). Los itemId string
+// (ítems con proteína, adiciones, personalizados con "_desc_") necesitan ir
+// entre comillas simples o rompen el JS inline — por eso antes el botón "−"
+// no funcionaba en platos como los Asados con proteína.
+const qid = v => typeof v === 'string' ? `'${v.replace(/'/g,"\\'")}'` : v;
+// Extrae el id numérico del ítem del menú a partir de un itemId compuesto
+// (ej: "32_pechuga" → 32, "32_desc_169999" → 32). Si ya es numérico, lo devuelve tal cual.
+const baseItemId = itemId => {
+  if(typeof itemId !== 'string') return itemId;
+  const m = itemId.match(/^(\d+)_/);
+  return m ? parseInt(m[1],10) : itemId;
+};
 const fmt     = n => `$${n.toLocaleString("es-CO")}`;
 const elapsed = ts => { const s=Math.floor((Date.now()-ts)/1000),m=Math.floor(s/60); return `${m}:${(s%60).toString().padStart(2,"0")}`; };
 const fmtHora = ts => { const d=new Date(ts); return d.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit',hour12:false}); };
@@ -1754,10 +1852,8 @@ function toggleHistOrder(id){
   if(el) el.classList.toggle('open');
 }
 function eliminarDelHistorial(id){
-  _markDirty(id);
-  orders=orders.filter(x=>String(x.id)!==String(id));
+  _deleteOrderEverywhere(id);
   renderHistorial();
-  _syncBg(()=>{ REF.orders.child(String(id)).remove().then(()=>_clearDirty(id)).catch(e=>console.warn(e)); });
 }
 
 // ── CANCELAR PEDIDO ──────────────────────────────────────────────────────────
@@ -1768,13 +1864,8 @@ function confirmCancelOrder(){
   if(!cancelOrderId)return;
   const o=orders.find(x=>String(x.id)===String(cancelOrderId));
   if(o&&o.tableId) tableStates[o.tableId]={status:'free'};
-  _markDirty(cancelOrderId);
-  orders=orders.filter(x=>x.id!==cancelOrderId);
+  _deleteOrderEverywhere(cancelOrderId);
   closeCancelModal();
-  renderPedidos();
-  updateBadge('pedidos',orders.filter(o=>isActive(o)).length);
-  updateBadge('kitchen',orders.filter(o=>o.status==='sent').length);
-  _syncBg(()=>{ REF.orders.child(String(cancelOrderId)).remove().then(()=>_clearDirty(cancelOrderId)).catch(e=>console.warn(e)); });
 }
 
 // ── ABONOS A CRÉDITO ─────────────────────────────────────────────────────────
@@ -1983,20 +2074,20 @@ function renderEditor(){
       return `<div class="sheet-item">
         <div class="sheet-item-row">
           <div class="qty-controls">
-            <button class="qty-btn minus" onclick="changeQty(${item.itemId},-1)">−</button>
+            <button class="qty-btn minus" onclick="changeQty(${qid(item.itemId)},-1)">−</button>
             <span class="qty-num" id="qty-${item.itemId}">${item.qty}</span>
-            <button class="qty-btn plus"  onclick="changeQty(${item.itemId},1)">+</button>
+            <button class="qty-btn plus"  onclick="changeQty(${qid(item.itemId)},1)">+</button>
           </div>
           <span class="sheet-item-name">${item.name}</span>
           <span class="sheet-item-price" id="price-${item.itemId}">${fmt(item.price*item.qty)}</span>
         </div>
         <div style="display:flex;align-items:center;gap:6px;margin-top:5px;">
-          <button onclick="openItemCustomModal(${item.itemId})" style="background:${isCustom?'rgba(231,76,60,.3)':'rgba(255,255,255,.12)'};border:1.5px solid ${isCustom?'#e74c3c':'rgba(255,255,255,.25)'};border-radius:7px;padding:4px 10px;font-size:.72rem;font-weight:800;cursor:pointer;color:${isCustom?'#ff8888':'#f0c040'};font-family:'Nunito',sans-serif;">
+          <button onclick="openItemCustomModal(${qid(item.itemId)})" style="background:${isCustom?'rgba(231,76,60,.3)':'rgba(255,255,255,.12)'};border:1.5px solid ${isCustom?'#e74c3c':'rgba(255,255,255,.25)'};border-radius:7px;padding:4px 10px;font-size:.72rem;font-weight:800;cursor:pointer;color:${isCustom?'#ff8888':'#f0c040'};font-family:'Nunito',sans-serif;">
             ✏️ ${isCustom?(descPct?`−${descPct}% · ${item.ingrPct}% ingr.`:`Personalizado`):'Descuento / ajuste'}
           </button>
           ${editingNoteId===item.itemId
-            ?`<div class="note-edit-row" style="flex:1;min-width:0"><input class="note-input" id="note-input-${item.itemId}" value="${item.note}" placeholder="Ej: sin salsa…" oninput="setNote(${item.itemId},this.value)" onkeydown="if(event.key==='Enter')confirmNoteTab(${item.itemId})"/><button class="note-ok" onclick="confirmNoteTab(${item.itemId})">OK</button></div>`
-            :`<div class="note-trigger" onclick="startNoteTab(${item.itemId})">${item.note?`<span class="note-pill">📝 ${item.note}</span>`:`<span class="note-empty" style="border:1.5px dashed rgba(255,255,255,.3);color:rgba(255,255,255,.55);border-radius:7px;padding:3px 10px;font-size:.72rem">+ Especificación</span>`}</div>`}
+            ?`<div class="note-edit-row" style="flex:1;min-width:0"><input class="note-input" id="note-input-${item.itemId}" value="${item.note}" placeholder="Ej: sin salsa…" oninput="setNote(${qid(item.itemId)},this.value)" onkeydown="if(event.key==='Enter')confirmNoteTab(${qid(item.itemId)})"/><button class="note-ok" onclick="confirmNoteTab(${qid(item.itemId)})">OK</button></div>`
+            :`<div class="note-trigger" onclick="startNoteTab(${qid(item.itemId)})">${item.note?`<span class="note-pill">📝 ${item.note}</span>`:`<span class="note-empty" style="border:1.5px dashed rgba(255,255,255,.3);color:rgba(255,255,255,.55);border-radius:7px;padding:3px 10px;font-size:.72rem">+ Especificación</span>`}</div>`}
         </div>
       </div>`;
     }).join('');
@@ -2112,20 +2203,18 @@ function confirmarProteina(opcion){
 
 // ── MODAL PERSONALIZACIÓN ÍTEM ────────────────────────────────────────────────
 let _icmItem = null; // ítem del menú en edición
+let _icmTargetId = null; // itemId exacto del carrito que se está editando (puede ser string compuesto)
 let _icmUnidades = 1; // cuántas unidades afectar
 
 function openItemCustomModal(catItemOrId){
+  const targetId = typeof catItemOrId === 'object' ? catItemOrId.id : catItemOrId;
   const catItem = typeof catItemOrId === 'object'
     ? catItemOrId
-    : MENU.flatMap(c=>c.items).find(i=>{
-        const id = typeof catItemOrId === 'string' && catItemOrId.toString().includes('_desc_')
-          ? parseInt(catItemOrId.toString().split('_desc_')[0])
-          : catItemOrId;
-        return i.id === id;
-      });
+    : MENU.flatMap(c=>c.items).find(i=>i.id === baseItemId(catItemOrId));
   if(!catItem) return;
   _icmItem = catItem;
-  const ex = editing ? editing.items.find(i=>i.itemId===catItem.id) : null;
+  _icmTargetId = targetId;
+  const ex = editing ? editing.items.find(i=>i.itemId===targetId) : null;
   const precio = ex ? ex.price : catItem.price;
   const ingr   = ex ? (ex.ingrPct ?? 100) : 100;
   const totalQty = ex ? ex.qty : 1;
@@ -2152,7 +2241,7 @@ function openItemCustomModal(catItemOrId){
 
 function changeIcmUnidades(d){
   if(!_icmItem||!editing) return;
-  const ex=editing.items.find(i=>i.itemId===_icmItem.id);
+  const ex=editing.items.find(i=>i.itemId===_icmTargetId);
   const maxQty=ex?ex.qty:1;
   _icmUnidades=Math.min(maxQty, Math.max(1, _icmUnidades+d));
   document.getElementById('icm-unidades-val').textContent=_icmUnidades;
@@ -2196,14 +2285,9 @@ function confirmItemCustom(){
   const ingrVal = isNaN(ingrPct) ? 100 : Math.max(0, ingrPct);
   const unidades = _icmUnidades;
 
-  // Busca el ítem exacto (puede ser el original o uno dividido)
-  // _icmItem guarda el catItem, pero el carrito puede tener varios con el mismo baseId
-  // Buscamos el primero que coincida
-  const ex = editing.items.find(i=>{
-    const baseId = typeof i.itemId === 'string' && i.itemId.includes('_desc_')
-      ? parseInt(i.itemId.split('_desc_')[0]) : i.itemId;
-    return baseId === _icmItem.id;
-  });
+  // Busca el ítem exacto del carrito que se está editando (respeta variantes
+  // de proteína u otras líneas ya divididas — _icmTargetId es el itemId real)
+  const ex = editing.items.find(i=>i.itemId===_icmTargetId);
   if(!ex){ closeItemCustomModal(); return; }
 
   const totalQty = ex.qty;
@@ -2216,7 +2300,7 @@ function confirmItemCustom(){
   } else {
     // Aplica solo a algunas — divide en dos líneas
     // Genera un itemId único para la versión con descuento (itemId original + sufijo)
-    const nuevoId = _icmItem.id + '_desc_' + Date.now();
+    const nuevoId = _icmTargetId + '_desc_' + Date.now();
     ex.qty = restantes; // los que quedan normales
 
     editing.items.push({
@@ -2260,20 +2344,20 @@ function renderSheet(){
     <div class="sheet-item">
       <div class="sheet-item-row">
         <div class="qty-controls">
-          <button class="qty-btn minus" onclick="changeQty(${item.itemId},-1)">−</button>
+          <button class="qty-btn minus" onclick="changeQty(${qid(item.itemId)},-1)">−</button>
           <span class="qty-num">${item.qty}</span>
-          <button class="qty-btn plus"  onclick="changeQty(${item.itemId},1)">+</button>
+          <button class="qty-btn plus"  onclick="changeQty(${qid(item.itemId)},1)">+</button>
         </div>
         <span class="sheet-item-name">${item.name}</span>
         <span class="sheet-item-price">${fmt(item.price*item.qty)}</span>
       </div>
       <div style="display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap">
-        <button onclick="openItemCustomModal(${item.itemId})" style="background:${isCustom?'#fff3f3':'#f5f5f5'};border:1.5px solid ${isCustom?'#e74c3c':'#ddd'};border-radius:7px;padding:4px 10px;font-size:.72rem;font-weight:800;cursor:pointer;color:${isCustom?'#e74c3c':'#888'};font-family:'Nunito',sans-serif;">
+        <button onclick="openItemCustomModal(${qid(item.itemId)})" style="background:${isCustom?'#fff3f3':'#f5f5f5'};border:1.5px solid ${isCustom?'#e74c3c':'#ddd'};border-radius:7px;padding:4px 10px;font-size:.72rem;font-weight:800;cursor:pointer;color:${isCustom?'#e74c3c':'#888'};font-family:'Nunito',sans-serif;">
           ✏️ ${isCustom?(descPct?`−${descPct}% · ${item.ingrPct}% ingr.`:`Personalizado`):'Descuento / ajuste'}
         </button>
         ${editingNoteId===item.itemId
-          ?`<div class="note-edit-row" style="flex:1;min-width:0"><input class="note-input" id="note-input-${item.itemId}" value="${item.note}" placeholder="Ej: sin salsa…" oninput="setNote(${item.itemId},this.value)" onkeydown="if(event.key==='Enter')confirmNote(${item.itemId})"/><button class="note-ok" onclick="confirmNote(${item.itemId})">OK</button></div>`
-          :`<div class="note-trigger" onclick="startNote(${item.itemId})">${item.note?`<span class="note-pill">📝 ${item.note}</span>`:`<span class="note-empty">+ Especificación</span>`}</div>`}
+          ?`<div class="note-edit-row" style="flex:1;min-width:0"><input class="note-input" id="note-input-${item.itemId}" value="${item.note}" placeholder="Ej: sin salsa…" oninput="setNote(${qid(item.itemId)},this.value)" onkeydown="if(event.key==='Enter')confirmNote(${qid(item.itemId)})"/><button class="note-ok" onclick="confirmNote(${qid(item.itemId)})">OK</button></div>`
+          :`<div class="note-trigger" onclick="startNote(${qid(item.itemId)})">${item.note?`<span class="note-pill">📝 ${item.note}</span>`:`<span class="note-empty">+ Especificación</span>`}</div>`}
       </div>
     </div>`;
   }).join('');
@@ -2761,11 +2845,14 @@ function getIngredientesDeItem(itemId){
   let proteina = null;
 
   if(typeof itemId==='string'){
-    if(itemId.includes('_desc_'))      baseId = parseInt(itemId.split('_desc_')[0]);
-    else if(itemId.includes('_')){
-      const parts = itemId.split('_');
+    // Quita el sufijo "_desc_<timestamp>" (si existe) antes de parsear la base/proteína
+    const sinDesc = itemId.includes('_desc_') ? itemId.split('_desc_')[0] : itemId;
+    if(sinDesc.includes('_')){
+      const parts = sinDesc.split('_');
       baseId = parseInt(parts[0]);
       proteina = parts.slice(1).join('_'); // ej: 'pechuga', 'cerdo', 'carne'
+    } else {
+      baseId = parseInt(sinDesc);
     }
   }
 
